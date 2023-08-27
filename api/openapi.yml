@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: PersURL
+  description: Application to manage and resolve [PURL](https://en.wikipedia.org/wiki/Persistent_uniform_resource_locator) links.
+  version: v1
+
+servers:
+  - url: "http://localhost"
+
+tags:
+  - name: Resolve
+    description: Resolution of PURLs
+  - name: Admin
+    description: Manage PURLs
+
+paths:
+  /r/{domain}/{name}:
+    get:
+      operationId: resolvePURL
+      summary: Resolve a PURL
+      tags: [Resolve]
+      parameters:
+        - $ref: '#/components/parameters/domain'
+        - $ref: '#/components/parameters/name'
+      responses:
+        302:
+          description: PURL resolved, use the `Location` header to navigate to the target.
+        404:
+          description: PURL not resolved, it probably does not exist.
+        410:
+          description: PURL not resolved as it is not available anymore.
+
+  /a/{domain}/{name}:
+    put:
+      operationId: savePURL
+      summary: Create or update a PURL
+      tags: [Admin]
+      parameters:
+        - $ref: '#/components/parameters/domain'
+        - $ref: '#/components/parameters/name'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target:
+                  type: string
+                  description: The target URL to redirect to.
+              required:
+                - target
+      responses:
+        204:
+          description: PURL created or updated.
+        404:
+          description: PURL not resolved, it probably does not exist.
+
+components:
+  parameters:
+    domain:
+      name: domain
+      in: path
+      description: The domain of the PURL.
+      required: true
+      schema:
+        $ref: '#/components/schemas/Named'
+    name:
+      name: name
+      in: path
+      description: The name of the PURL.
+      required: true
+      schema:
+        $ref: '#/components/schemas/Named'
+
+  schemas:
+    Named:
+      type: string
+      description: A name safe for URL usage
+      pattern: "^[a-zA-Z0-9_-]+$"
