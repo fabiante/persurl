@@ -17,21 +17,23 @@ type ResolveAPI interface {
 }
 
 func TestResolver(t *testing.T, resolver ResolveAPI) {
-	t.Run("does not resolve non-existant PURL", func(t *testing.T) {
-		purl, err := resolver.ResolvePURL("something-very-stupid", "should-not-exist")
-		require.Error(t, err)
-		require.ErrorIs(t, err, dsl.ErrNotFound)
-		require.Nil(t, purl)
-	})
+	t.Run("resolver", func(t *testing.T) {
+		t.Run("does not resolve non-existant PURL", func(t *testing.T) {
+			purl, err := resolver.ResolvePURL("something-very-stupid", "should-not-exist")
+			require.Error(t, err)
+			require.ErrorIs(t, err, dsl.ErrNotFound)
+			require.Nil(t, purl)
+		})
 
-	t.Run("resolves existing PURL", func(t *testing.T) {
-		domain := "my-domain"
-		name := "my-name"
+		t.Run("resolves existing PURL", func(t *testing.T) {
+			domain := "my-domain"
+			name := "my-name"
 
-		dsl.GivenExistingPURL(t, resolver, dsl.NewPURL(domain, name, mustParseURL("https://google.com")))
+			dsl.GivenExistingPURL(t, resolver, dsl.NewPURL(domain, name, mustParseURL("https://google.com")))
 
-		purl, err := resolver.ResolvePURL(domain, name)
-		require.NoError(t, err)
-		require.NotNil(t, purl)
+			purl, err := resolver.ResolvePURL(domain, name)
+			require.NoError(t, err)
+			require.NotNil(t, purl)
+		})
 	})
 }
