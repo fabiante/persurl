@@ -1,37 +1,48 @@
 package api
 
 import (
-	"fmt"
+	"database/sql"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	data map[string]string
+	db *sql.DB
 }
 
-func NewServer() *Server {
+func NewServer(db *sql.DB) *Server {
 	return &Server{
-		data: make(map[string]string),
+		db: db,
 	}
 }
 
 func (s *Server) Resolve(ctx *gin.Context) {
 	domain := ctx.Param("domain")
 	name := ctx.Param("name")
-	x := s.data[fmt.Sprintf("%s/%s", domain, name)]
-	if x == "" {
-		ctx.Status(404)
+
+	row := s.db.QueryRow("SELECT target FROM purls WHERE domain = ? AND name = ?", domain, name)
+	var target string
+	err := row.Scan(&target)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			ctx.AbortWithStatus(http.StatusNotFound)
+		} else {
+			_ = ctx.AbortWithError(http.StatusInternalServerError, err)
+		}
+
 		return
-	} else {
-		ctx.Redirect(http.StatusFound, x)
 	}
+
+	ctx.Redirect(http.StatusFound, target)
 }
 
 func (s *Server) SavePURL(ctx *gin.Context) {
 	domain := ctx.Param("domain")
 	name := ctx.Param("name")
+
 	type body struct {
 		Target string
 	}
@@ -39,6 +50,12 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 	if err := ctx.BindJSON(&bod); err != nil {
 		panic(err)
 	}
-	s.data[fmt.Sprintf("%s/%s", domain, name)] = bod.Target
+
+	_, err := s.db.Exec("INSERT INTO purls (domain, name, target) VALUES (?, ?, ?)", domain, name, bod.Target)
+	if err != nil {
+		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
 	ctx.Status(http.StatusNoContent)
 }
