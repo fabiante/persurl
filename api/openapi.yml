@@ -34,7 +34,7 @@ paths:
         410:
           description: PURL not resolved as it is not available anymore.
 
-  /a/{domain}/{name}:
+  /a/domains/{domain}/purls/{name}:
     put:
       operationId: savePURL
       summary: Create or update a PURL
