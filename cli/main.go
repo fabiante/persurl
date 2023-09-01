@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/fabiante/persurl/api"
+	"github.com/fabiante/persurl/db"
 	"github.com/gin-gonic/gin"
 	_ "modernc.org/sqlite"
 )
@@ -19,6 +20,11 @@ func main() {
 	database, err := sql.Open("sqlite", sqlitePath)
 	if err != nil {
 		log.Fatalf("opening sqlite database failed: %s", err)
+	}
+
+	err = db.MigrateDb(database)
+	if err != nil {
+		log.Fatalf("migrating sqlite database failed: %s", err)
 	}
 
 	server := api.NewServer(database)
