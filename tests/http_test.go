@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/fabiante/persurl/api"
+	"github.com/fabiante/persurl/db"
 	"github.com/fabiante/persurl/tests/driver"
 	"github.com/fabiante/persurl/tests/specs"
 	"github.com/gin-gonic/gin"
@@ -23,17 +24,17 @@ func TestWithHTTPDriver(t *testing.T) {
 	// ensure file does not exist
 	_ = os.Remove(sqlitePath)
 
-	db, err := sql.Open("sqlite", sqlitePath)
+	database, err := sql.Open("sqlite", sqlitePath)
 	if err != nil {
 		panic(err)
 	}
 
-	err = migrateDb(db)
+	err = db.MigrateDb(database)
 	if err != nil {
 		panic(err)
 	}
 
-	server := api.NewServer(db)
+	server := api.NewServer(database)
 	api.SetupRouting(handler, server)
 
 	testServer := httptest.NewServer(handler)
@@ -42,34 +43,4 @@ func TestWithHTTPDriver(t *testing.T) {
 
 	specs.TestResolver(t, dr)
 	specs.TestAdministration(t, dr)
-}
-
-func migrateDb(db *sql.DB) error {
-	stmts := []string{
-		`create table purls
-(
-    id     integer       not null
-        constraint puls_pk
-            primary key autoincrement,
-    domain varchar(32)   not null,
-    name   varchar(128)  not null,
-    target varchar(4096) not null,
-    constraint puls_pk2
-        unique (name, domain)
-);
-
-create index puls_domain_index
-    on purls (domain);
-
-`,
-	}
-
-	for _, stmt := range stmts {
-		_, err := db.Exec(stmt)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
