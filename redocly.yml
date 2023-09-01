@@ -1,0 +1,8 @@
+extends:
+  - recommended
+
+rules:
+  # Service is designed to sometimes respond only with 3xx and 4xx responses.
+  operation-2xx-response: off
+  # It should be enough to state the license name. The git repository is the source of truth here.
+  info-license-url: off
