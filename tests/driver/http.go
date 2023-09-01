@@ -79,6 +79,8 @@ func (driver *HTTPDriver) CreatePurl(purl *dsl.PURL) error {
 	switch res.StatusCode {
 	case http.StatusNoContent:
 		return nil
+	case http.StatusBadRequest:
+		return fmt.Errorf("%w: status %d returned", dsl.ErrBadRequest, res.StatusCode)
 	default:
 		return fmt.Errorf("unexpected status code: %d", res.StatusCode)
 	}

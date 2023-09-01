@@ -29,6 +29,8 @@ paths:
       responses:
         302:
           description: PURL resolved, use the `Location` header to navigate to the target.
+        400:
+          $ref: "#/components/responses/BadRequest"
         404:
           description: PURL not resolved, it probably does not exist.
         410:
@@ -56,6 +58,8 @@ paths:
       responses:
         204:
           description: PURL created or updated.
+        400:
+          $ref: "#/components/responses/BadRequest"
         404:
           description: PURL not resolved, it probably does not exist.
 
@@ -76,7 +80,18 @@ components:
       schema:
         $ref: '#/components/schemas/Named'
 
+  responses:
+    BadRequest:
+      description: Bad request, see response body for details.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
   schemas:
+    Error:
+      type: string
+
     Named:
       type: string
       description: A name safe for URL usage

@@ -1,9 +1,10 @@
 package tests
 
 import (
+	"testing"
+
 	"github.com/fabiante/persurl/tests/driver"
 	"github.com/fabiante/persurl/tests/specs"
-	"testing"
 )
 
 func TestWithMockDriver(t *testing.T) {
