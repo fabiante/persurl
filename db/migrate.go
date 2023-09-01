@@ -4,7 +4,7 @@ import "database/sql"
 
 func MigrateDb(db *sql.DB) error {
 	stmts := []string{
-		`create table purls
+		`create table if not exists purls
 (
     id     integer       not null
         constraint puls_pk
