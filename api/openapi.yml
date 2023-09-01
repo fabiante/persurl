@@ -3,6 +3,8 @@ info:
   title: PersURL
   description: Application to manage and resolve [PURL](https://en.wikipedia.org/wiki/Persistent_uniform_resource_locator) links.
   version: v1
+  license:
+    name: MIT
 
 servers:
   - url: "http://localhost"
