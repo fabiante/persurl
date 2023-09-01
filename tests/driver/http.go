@@ -55,7 +55,7 @@ func (driver *HTTPDriver) purlPath(domain string, name string) string {
 }
 
 func (driver *HTTPDriver) adminPath(domain string, name string) string {
-	return fmt.Sprintf("%s/a/%s/%s", driver.BasePath, domain, name)
+	return fmt.Sprintf("%s/a/domains/%s/purls/%s", driver.BasePath, domain, name)
 }
 
 func (driver *HTTPDriver) CreatePurl(purl *dsl.PURL) error {
