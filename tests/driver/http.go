@@ -15,7 +15,15 @@ type HTTPDriver struct {
 	Client   *http.Client
 }
 
-func NewHTTPDriver(basePath string, client *http.Client) *HTTPDriver {
+func NewHTTPDriver(basePath string, transport http.RoundTripper) *HTTPDriver {
+	client := &http.Client{
+		Transport: transport,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			// This prevents following any HTTP redirects.
+			// We don't want to follow because we want to assert them
+			return http.ErrUseLastResponse
+		},
+	}
 	return &HTTPDriver{BasePath: basePath, Client: client}
 }
 

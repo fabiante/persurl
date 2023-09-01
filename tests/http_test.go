@@ -19,5 +19,5 @@ func TestWithHTTPDriver(t *testing.T) {
 	api.SetupRouting(handler, server)
 
 	testServer := httptest.NewServer(handler)
-	specs.TestResolver(t, driver.NewHTTPDriver(testServer.URL, http.DefaultClient))
+	specs.TestResolver(t, driver.NewHTTPDriver(testServer.URL, http.DefaultTransport))
 }
