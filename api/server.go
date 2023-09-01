@@ -29,7 +29,7 @@ func (s *Server) Resolve(ctx *gin.Context) {
 	}
 }
 
-func (s *Server) Save(ctx *gin.Context) {
+func (s *Server) SavePURL(ctx *gin.Context) {
 	domain := ctx.Param("domain")
 	name := ctx.Param("name")
 	type body struct {

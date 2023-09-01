@@ -7,5 +7,5 @@ func SetupRouting(r gin.IRouter, s *Server) {
 	r.GET("/r/:domain/:name", s.Resolve)
 
 	// Admin endpoints
-	r.PUT("/a/domains/:domain/purls/:name", s.Save)
+	r.PUT("/a/domains/:domain/purls/:name", s.SavePURL)
 }
