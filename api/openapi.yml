@@ -13,6 +13,8 @@ tags:
   - name: Admin
     description: Manage PURLs
 
+security: []
+
 paths:
   /r/{domain}/{name}:
     get:
