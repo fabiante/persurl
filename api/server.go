@@ -22,7 +22,7 @@ func (s *Server) Resolve(ctx *gin.Context) {
 	domain := ctx.Param("domain")
 	name := ctx.Param("name")
 
-	row := s.db.QueryRow("SELECT target FROM purls WHERE domain = ? AND name = ?", domain, name)
+	row := s.db.QueryRow("SELECT target FROM purls p join domains d on d.id = p.domain_id WHERE d.name = ? AND p.name = ?", domain, name)
 	var target string
 	err := row.Scan(&target)
 
@@ -32,7 +32,6 @@ func (s *Server) Resolve(ctx *gin.Context) {
 		} else {
 			_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 		}
-
 		return
 	}
 
@@ -51,7 +50,21 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 		panic(err)
 	}
 
-	_, err := s.db.Exec("INSERT INTO purls (domain, name, target) VALUES (?, ?, ?)", domain, name, bod.Target)
+	// get domain by id
+	row := s.db.QueryRow("SELECT id FROM domains WHERE name = ?", domain)
+	var domainId int
+	err := row.Scan(&domainId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, "domain does not exist")
+		} else {
+			_ = ctx.AbortWithError(http.StatusInternalServerError, err)
+		}
+		return
+	}
+
+	// insert purl
+	_, err = s.db.Exec("INSERT INTO purls (domain_id, name, target) VALUES (?, ?, ?)", domainId, name, bod.Target)
 	if err != nil {
 		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
