@@ -23,7 +23,7 @@ jobs:
     - name: Install Test Runner
       run: go install github.com/mfridman/tparse@latest
     - name: Test
-      run: set -o pipefail && go test fmt -json -v ./... | tparse -all
+      run: set -o pipefail && go test -json -v ./... | tparse -all
 
     - name: Build
       run: go build -v ./...
