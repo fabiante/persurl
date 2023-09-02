@@ -1,9 +1,10 @@
 package main
 
 import (
+	"log"
+
 	"github.com/fabiante/persurl/api"
 	"github.com/gin-gonic/gin"
-	"log"
 )
 
 // main is a crude CLI entrypoint for the application. Will be replaced
@@ -12,7 +13,7 @@ func main() {
 	engine := gin.Default()
 	server := api.NewServer()
 	api.SetupRouting(engine, server)
-	if err := engine.Run(":80"); err != nil {
+	if err := engine.Run(":8060"); err != nil {
 		log.Fatalf("running api failed: %s", err)
 	}
 }
