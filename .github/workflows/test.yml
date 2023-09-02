@@ -19,7 +19,11 @@ jobs:
       run: go vet -v ./...
     - name: Lint API Spec
       run: npx @redocly/cli lint api/openapi.yml
+
+    - name: Install Test Runner
+      run: go install github.com/mfridman/tparse@latest
     - name: Test
-      run: go test -v ./...
+      run: set -o pipefail && go test fmt -json -v ./... | tparse -all
+
     - name: Build
       run: go build -v ./...
