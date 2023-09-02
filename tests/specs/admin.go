@@ -31,6 +31,7 @@ func TestAdministration(t *testing.T, admin dsl.AdminAPI) {
 
 			for i, purl := range invalid {
 				t.Run(fmt.Sprintf("invalid[%d]", i), func(t *testing.T) {
+					dsl.GivenExistingDomain(t, admin, purl.Domain)
 					err := admin.CreatePurl(purl)
 					require.Error(t, err)
 					require.ErrorIs(t, err, dsl.ErrBadRequest)
