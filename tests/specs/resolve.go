@@ -29,6 +29,7 @@ func TestResolver(t *testing.T, resolver ResolveAPI) {
 			domain := "my-domain"
 			name := "my-name"
 
+			dsl.GivenExistingDomain(t, resolver, domain)
 			dsl.GivenExistingPURL(t, resolver, dsl.NewPURL(domain, name, mustParseURL("https://google.com")))
 
 			purl, err := resolver.ResolvePURL(domain, name)
