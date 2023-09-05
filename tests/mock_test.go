@@ -8,5 +8,7 @@ import (
 )
 
 func TestWithMockDriver(t *testing.T) {
-	specs.TestResolver(t, driver.NewMockDriver())
+	d := driver.NewMockDriver()
+	specs.TestResolver(t, d)
+	specs.TestAdministration(t, d)
 }
