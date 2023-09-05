@@ -22,7 +22,7 @@ func NewMockDriver() *MockDriver {
 	}
 }
 
-func (m *MockDriver) CreatePurl(purl *dsl.PURL) error {
+func (m *MockDriver) SavePURL(purl *dsl.PURL) error {
 	var errs = []error{
 		api.ValidNamed(purl.Name),
 		api.ValidNamed(purl.Domain),

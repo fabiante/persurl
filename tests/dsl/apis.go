@@ -4,7 +4,8 @@ import "net/url"
 
 // AdminAPI defines admin features of the application.
 type AdminAPI interface {
-	CreatePurl(purl *PURL) error
+	// SavePURL creates a new or updates an existing purl.
+	SavePURL(purl *PURL) error
 }
 
 // ResolveAPI defines features for PURL resolution.

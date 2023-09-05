@@ -58,7 +58,7 @@ func (driver *HTTPDriver) adminPath(domain string, name string) string {
 	return fmt.Sprintf("%s/a/domains/%s/purls/%s", driver.BasePath, domain, name)
 }
 
-func (driver *HTTPDriver) CreatePurl(purl *dsl.PURL) error {
+func (driver *HTTPDriver) SavePURL(purl *dsl.PURL) error {
 	body := bytes.NewBuffer([]byte{})
 	err := json.NewEncoder(body).Encode(map[string]string{
 		"target": purl.Target.String(),
