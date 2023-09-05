@@ -39,7 +39,7 @@ func TestAdministration(t *testing.T, admin dsl.AdminAPI) {
 		})
 
 		t.Run("can create valid PURL", func(t *testing.T) {
-			domain := "my-domain"
+			domain := "my-domain-123456"
 
 			dsl.GivenExistingDomain(t, admin, domain)
 			dsl.GivenExistingPURL(t, admin, dsl.NewPURL(domain, "my-name", mustParseURL("https://google.com")))
