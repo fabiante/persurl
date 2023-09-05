@@ -86,3 +86,24 @@ func (driver *HTTPDriver) SavePURL(purl *dsl.PURL) error {
 		return fmt.Errorf("unexpected status code: %d", res.StatusCode)
 	}
 }
+
+func (driver *HTTPDriver) CreateDomain(name string) error {
+	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/a/domains/%s", driver.BasePath, name), nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := driver.Client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	switch res.StatusCode {
+	case http.StatusNoContent:
+		return nil
+	case http.StatusBadRequest:
+		return fmt.Errorf("%w: status %d returned", dsl.ErrBadRequest, res.StatusCode)
+	default:
+		return fmt.Errorf("unexpected status code: %d", res.StatusCode)
+	}
+}
