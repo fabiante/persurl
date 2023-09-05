@@ -1,22 +1,13 @@
 package specs
 
 import (
-	"net/url"
 	"testing"
 
 	"github.com/fabiante/persurl/tests/dsl"
 	"github.com/stretchr/testify/require"
 )
 
-type ResolveAPI interface {
-	dsl.AdminAPI
-
-	// ResolvePURL resolves the PURL identified by domain and name, returning
-	// the target of the resolved PURL.
-	ResolvePURL(domain string, name string) (*url.URL, error)
-}
-
-func TestResolver(t *testing.T, resolver ResolveAPI) {
+func TestResolver(t *testing.T, resolver dsl.API) {
 	t.Run("resolver", func(t *testing.T) {
 		t.Run("does not resolve non-existant PURL", func(t *testing.T) {
 			purl, err := resolver.ResolvePURL("something-very-stupid", "should-not-exist")
