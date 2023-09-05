@@ -1,7 +1,9 @@
 package driver
 
 import (
+	"errors"
 	"fmt"
+	"github.com/fabiante/persurl/api"
 	"github.com/fabiante/persurl/tests/dsl"
 	"net/url"
 )
@@ -20,7 +22,16 @@ func NewMockDriver() *MockDriver {
 	}
 }
 
-func (m *MockDriver) CreatePurl(purl *dsl.PURL) error {
+func (m *MockDriver) SavePURL(purl *dsl.PURL) error {
+	var errs = []error{
+		api.ValidNamed(purl.Name),
+		api.ValidNamed(purl.Domain),
+	}
+
+	if err := errors.Join(errs...); err != nil {
+		return fmt.Errorf("%w: %w", dsl.ErrBadRequest, err)
+	}
+
 	m.purls[fmt.Sprintf("%s/%s", purl.Domain, purl.Name)] = purl
 	return nil
 }

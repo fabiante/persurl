@@ -28,3 +28,11 @@ func validPathVar(key string, regex *regexp.Regexp) gin.HandlerFunc {
 		context.Next()
 	}
 }
+
+// ValidNamed can be used to check if some name is valid for this api.
+func ValidNamed(s string) error {
+	if !regexNamed.MatchString(s) {
+		return fmt.Errorf("name does not match regex %s", regexNamed.String())
+	}
+	return nil
+}
