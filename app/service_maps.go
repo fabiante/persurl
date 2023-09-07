@@ -2,24 +2,21 @@ package app
 
 import (
 	"fmt"
-	"net/url"
-
-	"github.com/fabiante/persurl/tests/dsl"
 )
 
 type DomainMap map[string]PurlMap
 
-type PurlMap map[string]*dsl.PURL
+type PurlMap map[string]string
 
-func (m PurlMap) CreatePurl(purl *dsl.PURL) error {
-	m[purl.Name] = purl
+func (m PurlMap) CreatePurl(name string, target string) error {
+	m[name] = target
 	return nil
 }
 
-func (m PurlMap) ResolvePURL(name string) (*url.URL, error) {
+func (m PurlMap) ResolvePURL(name string) (string, error) {
 	if purl, purlExists := m[name]; purlExists {
-		return purl.Target, nil
+		return purl, nil
 	}
 
-	return nil, fmt.Errorf("%w: purl does not exist", ErrNotFound)
+	return "", fmt.Errorf("%w: purl does not exist", ErrNotFound)
 }
