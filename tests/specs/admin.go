@@ -58,7 +58,7 @@ func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
 
 		dsl.GivenExistingDomain(t, admin, domain)
 		// TODO: Assert non-existence of purl to be created
-		dsl.GivenExistingPURL(t, admin, purl)
+		require.NoError(t, admin.SavePURL(purl), "creating purl failed")
 	})
 
 	t.Run("can update existing purl", func(t *testing.T) {
