@@ -5,6 +5,8 @@ import (
 )
 
 func SetupRouting(r gin.IRouter, s *Server) {
+	r.Use(errHandler)
+
 	validDomain := validPathVar("domain", regexNamed)
 	validName := validPathVar("name", regexNamed)
 
