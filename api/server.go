@@ -40,7 +40,8 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 
 	var req res.SavePURL
 	if err := ctx.BindJSON(&req); err != nil {
-		panic(err)
+		ctx.Abort()
+		return
 	}
 
 	s.service.SavePURL(domain, name, req.Target)
