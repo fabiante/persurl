@@ -88,4 +88,9 @@ func testDomainAdmin(t *testing.T, admin dsl.AdminAPI) {
 			})
 		}
 	})
+
+	t.Run("can create valid domain", func(t *testing.T) {
+		err := admin.CreateDomain("awesome-domain-unique-name-123")
+		require.NoError(t, err)
+	})
 }
