@@ -44,9 +44,17 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 		return
 	}
 
-	s.service.SavePURL(domain, name, req.Target)
-
-	ctx.Status(http.StatusNoContent)
+	err := s.service.SavePURL(domain, name, req.Target)
+	switch true {
+	case err == nil:
+		ctx.Status(http.StatusNoContent)
+		return
+	case errors.Is(err, app.ErrBadRequest):
+		ctx.Status(http.StatusBadRequest)
+		return
+	default:
+		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
+	}
 }
 
 func (s *Server) CreateDomain(ctx *gin.Context) {
