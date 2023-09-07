@@ -63,6 +63,19 @@ paths:
         404:
           description: PURL not resolved, it probably does not exist.
 
+  /a/domains/{domain}:
+    post:
+      operationId: createDomain
+      summary: Create a domain
+      tags: [Admin]
+      parameters:
+        - $ref: '#/components/parameters/domain'
+      responses:
+        204:
+          description: Domain created.
+        400:
+          $ref: "#/components/responses/BadRequest"
+
 components:
   parameters:
     domain:
