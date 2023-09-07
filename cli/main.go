@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/fabiante/persurl/api"
+	"github.com/fabiante/persurl/app"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,7 +12,8 @@ import (
 // with a proper CLI supporting multiple commands later.
 func main() {
 	engine := gin.Default()
-	server := api.NewServer()
+	service := app.NewService()
+	server := api.NewServer(service)
 	api.SetupRouting(engine, server)
 	if err := engine.Run(":8060"); err != nil {
 		log.Fatalf("running api failed: %s", err)
