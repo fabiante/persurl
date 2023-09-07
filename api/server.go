@@ -49,11 +49,9 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 	case err == nil:
 		ctx.Status(http.StatusNoContent)
 		return
-	case errors.Is(err, app.ErrBadRequest):
-		ctx.Status(http.StatusBadRequest)
-		return
 	default:
-		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
+		_ = ctx.Error(err)
+		ctx.Abort()
 	}
 }
 
