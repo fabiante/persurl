@@ -102,7 +102,7 @@ func (driver *HTTPDriver) CreateDomain(name string) error {
 	case http.StatusNoContent:
 		return nil
 	case http.StatusBadRequest:
-		return fmt.Errorf("%w: status %d returned", dsl.ErrBadRequest, res.StatusCode)
+		return fmt.Errorf("%w: status %d returned", app.ErrBadRequest, res.StatusCode)
 	default:
 		return fmt.Errorf("unexpected status code: %d", res.StatusCode)
 	}

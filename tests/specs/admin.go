@@ -31,7 +31,7 @@ func TestAdministration(t *testing.T, admin dsl.AdminAPI) {
 				t.Run(fmt.Sprintf("invalid[%d]", i), func(t *testing.T) {
 					err := admin.CreateDomain(domain)
 					require.Error(t, err)
-					require.ErrorIs(t, err, dsl.ErrBadRequest)
+					require.ErrorIs(t, err, app.ErrBadRequest)
 				})
 			}
 		})
