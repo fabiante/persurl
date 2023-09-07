@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/fabiante/persurl/app"
 	"github.com/fabiante/persurl/tests/dsl"
 )
 
@@ -37,7 +38,7 @@ func (driver *HTTPDriver) ResolvePURL(domain string, name string) (*url.URL, err
 	case http.StatusFound:
 		break
 	case http.StatusNotFound:
-		return nil, fmt.Errorf("%w: status %d returned", dsl.ErrNotFound, res.StatusCode)
+		return nil, fmt.Errorf("%w: status %d returned", app.ErrNotFound, res.StatusCode)
 	default:
 		return nil, fmt.Errorf("unexpected status code: %d", res.StatusCode)
 	}
@@ -80,7 +81,7 @@ func (driver *HTTPDriver) SavePURL(purl *dsl.PURL) error {
 	case http.StatusNoContent:
 		return nil
 	case http.StatusBadRequest:
-		return fmt.Errorf("%w: status %d returned", dsl.ErrBadRequest, res.StatusCode)
+		return fmt.Errorf("%w: status %d returned", app.ErrBadRequest, res.StatusCode)
 	default:
 		return fmt.Errorf("unexpected status code: %d", res.StatusCode)
 	}

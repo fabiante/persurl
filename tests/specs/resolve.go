@@ -3,6 +3,7 @@ package specs
 import (
 	"testing"
 
+	"github.com/fabiante/persurl/app"
 	"github.com/fabiante/persurl/tests/dsl"
 	"github.com/stretchr/testify/require"
 )
@@ -12,7 +13,7 @@ func TestResolver(t *testing.T, resolver dsl.API) {
 		t.Run("does not resolve non-existant PURL", func(t *testing.T) {
 			purl, err := resolver.ResolvePURL("something-very-stupid", "should-not-exist")
 			require.Error(t, err)
-			require.ErrorIs(t, err, dsl.ErrNotFound)
+			require.ErrorIs(t, err, app.ErrNotFound)
 			require.Nil(t, purl)
 		})
 
