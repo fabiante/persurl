@@ -10,8 +10,23 @@ import (
 
 func TestResolver(t *testing.T, resolver dsl.API) {
 	t.Run("resolver", func(t *testing.T) {
-		t.Run("does not resolve non-existant PURL", func(t *testing.T) {
-			purl, err := resolver.ResolvePURL("something-very-stupid", "should-not-exist")
+		t.Run("does not resolve non-existent domain", func(t *testing.T) {
+			domain := "something-very-stupid-9873214356"
+			name := "should-not-exist"
+
+			purl, err := resolver.ResolvePURL(domain, name)
+			require.Error(t, err)
+			require.ErrorIs(t, err, app.ErrNotFound)
+			require.Nil(t, purl)
+		})
+
+		t.Run("does not resolve non-existent purl", func(t *testing.T) {
+			domain := "something-very-stupid-34563456"
+			name := "should-not-exist"
+
+			dsl.GivenExistingDomain(t, resolver, domain)
+
+			purl, err := resolver.ResolvePURL(domain, name)
 			require.Error(t, err)
 			require.ErrorIs(t, err, app.ErrNotFound)
 			require.Nil(t, purl)
