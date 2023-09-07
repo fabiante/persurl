@@ -27,10 +27,10 @@ func (s *Server) Resolve(ctx *gin.Context) {
 		ctx.Redirect(http.StatusFound, target)
 		return
 	case errors.Is(err, app.ErrNotFound):
-		ctx.Status(404)
+		respondWithError(ctx, http.StatusNotFound, err)
 		return
 	default:
-		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
+		respondWithError(ctx, http.StatusInternalServerError, err)
 	}
 }
 
@@ -48,12 +48,10 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 	switch true {
 	case err == nil:
 		ctx.Status(http.StatusNoContent)
-		return
 	case errors.Is(err, app.ErrBadRequest):
-		ctx.Status(http.StatusBadRequest)
-		return
+		respondWithError(ctx, http.StatusBadRequest, err)
 	default:
-		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
+		respondWithError(ctx, http.StatusInternalServerError, err)
 	}
 }
 
@@ -64,12 +62,9 @@ func (s *Server) CreateDomain(ctx *gin.Context) {
 	switch true {
 	case err == nil:
 		ctx.Status(http.StatusNoContent)
-		return
 	case errors.Is(err, app.ErrBadRequest):
-		ctx.Status(http.StatusBadRequest)
-		return
+		respondWithError(ctx, http.StatusBadRequest, err)
 	default:
-		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
-		return
+		respondWithError(ctx, http.StatusInternalServerError, err)
 	}
 }
