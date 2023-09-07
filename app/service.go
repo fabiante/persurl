@@ -31,3 +31,8 @@ func (s *Service) Resolve(domain, name string) (string, error) {
 func (s *Service) SavePURL(domain, name string, target string) {
 	s.data[fmt.Sprintf("%s/%s", domain, name)] = target
 }
+
+func (s *Service) CreateDomain(domain string) error {
+	// currently a no-op
+	return nil
+}

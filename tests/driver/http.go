@@ -29,7 +29,7 @@ func NewHTTPDriver(basePath string, transport http.RoundTripper) *HTTPDriver {
 }
 
 func (driver *HTTPDriver) ResolvePURL(domain string, name string) (*url.URL, error) {
-	res, err := driver.Client.Get(driver.purlPath(domain, name))
+	res, err := driver.Client.Get(fmt.Sprintf("%s/r/%s/%s", driver.BasePath, domain, name))
 	if err != nil {
 		return nil, err
 	}
@@ -51,14 +51,6 @@ func (driver *HTTPDriver) ResolvePURL(domain string, name string) (*url.URL, err
 	return loc, nil
 }
 
-func (driver *HTTPDriver) purlPath(domain string, name string) string {
-	return fmt.Sprintf("%s/r/%s/%s", driver.BasePath, domain, name)
-}
-
-func (driver *HTTPDriver) adminPath(domain string, name string) string {
-	return fmt.Sprintf("%s/a/domains/%s/purls/%s", driver.BasePath, domain, name)
-}
-
 func (driver *HTTPDriver) SavePURL(purl *dsl.PURL) error {
 	body := bytes.NewBuffer([]byte{})
 	err := json.NewEncoder(body).Encode(map[string]string{
@@ -67,7 +59,28 @@ func (driver *HTTPDriver) SavePURL(purl *dsl.PURL) error {
 	if err != nil {
 		return err
 	}
-	req, err := http.NewRequest(http.MethodPut, driver.adminPath(purl.Domain, purl.Name), body)
+	req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s/a/domains/%s/purls/%s", driver.BasePath, purl.Domain, purl.Name), body)
+	if err != nil {
+		return err
+	}
+
+	res, err := driver.Client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	switch res.StatusCode {
+	case http.StatusNoContent:
+		return nil
+	case http.StatusBadRequest:
+		return fmt.Errorf("%w: status %d returned", app.ErrBadRequest, res.StatusCode)
+	default:
+		return fmt.Errorf("unexpected status code: %d", res.StatusCode)
+	}
+}
+
+func (driver *HTTPDriver) CreateDomain(name string) error {
+	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/a/domains/%s", driver.BasePath, name), nil)
 	if err != nil {
 		return err
 	}

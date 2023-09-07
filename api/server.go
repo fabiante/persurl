@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/fabiante/persurl/api/res"
 	"github.com/fabiante/persurl/app"
 	"github.com/gin-gonic/gin"
 )
@@ -37,15 +38,29 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 	domain := ctx.Param("domain")
 	name := ctx.Param("name")
 
-	type body struct {
-		Target string
-	}
-	var bod body
-	if err := ctx.BindJSON(&bod); err != nil {
+	var req res.SavePURL
+	if err := ctx.BindJSON(&req); err != nil {
 		panic(err)
 	}
 
-	s.service.SavePURL(domain, name, bod.Target)
+	s.service.SavePURL(domain, name, req.Target)
 
 	ctx.Status(http.StatusNoContent)
+}
+
+func (s *Server) CreateDomain(ctx *gin.Context) {
+	domain := ctx.Param("domain")
+
+	err := s.service.CreateDomain(domain)
+	switch true {
+	case err == nil:
+		ctx.Status(http.StatusNoContent)
+		return
+	case errors.Is(err, app.ErrBadRequest):
+		ctx.Status(http.StatusBadRequest)
+		return
+	default:
+		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 }

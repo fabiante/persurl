@@ -18,5 +18,6 @@ func GivenExistingPURL(t *testing.T, service AdminAPI, purl *PURL) {
 //
 // This currently is a no-op since domains can't explicitly be created.
 func GivenExistingDomain(t *testing.T, service AdminAPI, domain string) {
-	// no-op - Implement something here once domains can be created.
+	err := service.CreateDomain(domain)
+	require.NoError(t, err, "creating domain failed")
 }
