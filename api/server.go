@@ -1,37 +1,42 @@
 package api
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
 
+	"github.com/fabiante/persurl/app"
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	data map[string]string
+	service *app.Service
 }
 
-func NewServer() *Server {
-	return &Server{
-		data: make(map[string]string),
-	}
+func NewServer(service *app.Service) *Server {
+	return &Server{service: service}
 }
 
 func (s *Server) Resolve(ctx *gin.Context) {
 	domain := ctx.Param("domain")
 	name := ctx.Param("name")
-	x := s.data[fmt.Sprintf("%s/%s", domain, name)]
-	if x == "" {
+
+	target, err := s.service.Resolve(domain, name)
+	switch true {
+	case err == nil:
+		ctx.Redirect(http.StatusFound, target)
+		return
+	case errors.Is(err, app.ErrNotFound):
 		ctx.Status(404)
 		return
-	} else {
-		ctx.Redirect(http.StatusFound, x)
+	default:
+		_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 	}
 }
 
 func (s *Server) SavePURL(ctx *gin.Context) {
 	domain := ctx.Param("domain")
 	name := ctx.Param("name")
+
 	type body struct {
 		Target string
 	}
@@ -39,6 +44,8 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 	if err := ctx.BindJSON(&bod); err != nil {
 		panic(err)
 	}
-	s.data[fmt.Sprintf("%s/%s", domain, name)] = bod.Target
+
+	s.service.SavePURL(domain, name, bod.Target)
+
 	ctx.Status(http.StatusNoContent)
 }
