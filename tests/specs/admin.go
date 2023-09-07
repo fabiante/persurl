@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/fabiante/persurl/app"
 	"github.com/fabiante/persurl/tests/dsl"
 	"github.com/stretchr/testify/require"
 )
@@ -41,6 +42,14 @@ func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
 				//require.ErrorIs(t, err, app.ErrBadRequest) // TODO: Some tests cause a 404 with the http driver.
 			})
 		}
+	})
+
+	t.Run("can't create PURL on non-existent domain", func(t *testing.T) {
+		domain := "this-domain-does-not-exist-it-should-not"
+		purl := dsl.NewPURL(domain, "my-name3456334654645663456", mustParseURL("https://google.com"))
+
+		err := admin.SavePURL(purl)
+		require.ErrorIs(t, err, app.ErrBadRequest)
 	})
 
 	t.Run("can create new PURL", func(t *testing.T) {
