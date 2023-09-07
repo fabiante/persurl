@@ -8,9 +8,8 @@ type DomainMap map[string]PurlMap
 
 type PurlMap map[string]string
 
-func (m PurlMap) CreatePurl(name string, target string) error {
+func (m PurlMap) CreatePurl(name string, target string) {
 	m[name] = target
-	return nil
 }
 
 func (m PurlMap) ResolvePURL(name string) (string, error) {
