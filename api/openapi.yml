@@ -33,8 +33,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         404:
           description: PURL not resolved, it probably does not exist.
-        410:
-          description: PURL not resolved as it is not available anymore.
 
   /a/domains/{domain}/purls/{name}:
     put:
@@ -60,8 +58,6 @@ paths:
           description: PURL created or updated.
         400:
           $ref: "#/components/responses/BadRequest"
-        404:
-          description: PURL not resolved, it probably does not exist.
 
   /a/domains/{domain}:
     post:
@@ -99,11 +95,17 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/ErrorList'
 
   schemas:
-    Error:
-      type: string
+    ErrorList:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+            example: Something went wrong
 
     Named:
       type: string

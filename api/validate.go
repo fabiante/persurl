@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"net/http"
 	"regexp"
 
 	"github.com/gin-gonic/gin"
@@ -19,12 +20,11 @@ func init() {
 // regular expression. If the path variable does not match the regular
 // expression, the middleware aborts the request with status 400.
 func validPathVar(key string, regex *regexp.Regexp) gin.HandlerFunc {
-	return func(context *gin.Context) {
-		if !regex.MatchString(context.Param(key)) {
-			err := fmt.Sprintf("path variable %q does not match regex %s", key, regex.String())
-			context.AbortWithStatusJSON(400, err)
+	return func(ctx *gin.Context) {
+		if !regex.MatchString(ctx.Param(key)) {
+			respondWithError(ctx, http.StatusBadRequest, fmt.Errorf("path variable %q does not match regex %s", key, regex.String()))
 			return
 		}
-		context.Next()
+		ctx.Next()
 	}
 }
