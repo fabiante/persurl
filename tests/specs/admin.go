@@ -102,4 +102,12 @@ func testDomainAdmin(t *testing.T, admin dsl.AdminAPI) {
 		err := admin.CreateDomain("awesome-domain-unique-name-123")
 		require.NoError(t, err)
 	})
+
+	t.Run("can't create duplicate domain", func(t *testing.T) {
+		domain := "should-exist-once-4357824758wr47895645"
+		dsl.GivenExistingDomain(t, admin, domain)
+		err := admin.CreateDomain("awesome-domain-unique-name-123")
+		require.Error(t, err)
+		require.ErrorIs(t, err, app.ErrBadRequest)
+	})
 }
