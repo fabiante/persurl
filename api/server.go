@@ -10,10 +10,10 @@ import (
 )
 
 type Server struct {
-	service *app.Service
+	service app.ServiceInterface
 }
 
-func NewServer(service *app.Service) *Server {
+func NewServer(service app.ServiceInterface) *Server {
 	return &Server{service: service}
 }
 
