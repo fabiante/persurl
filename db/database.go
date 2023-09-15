@@ -3,6 +3,7 @@ package db
 import (
 	"errors"
 	"fmt"
+	"sync"
 
 	"github.com/doug-martin/goqu/v9"
 	_ "github.com/doug-martin/goqu/v9/dialect/sqlite3"
@@ -14,16 +15,21 @@ import (
 
 // Database implements the applications core logic.
 type Database struct {
-	db *goqu.Database
+	db   *goqu.Database
+	lock *sync.RWMutex
 }
 
 func NewDatabase(db *goqu.Database) *Database {
 	return &Database{
-		db: db,
+		db:   db,
+		lock: &sync.RWMutex{},
 	}
 }
 
 func (db *Database) Resolve(domain, name string) (string, error) {
+	db.lock.RLock()
+	defer db.lock.RUnlock()
+
 	query := db.db.Select("purls.target").
 		From("purls").
 		Join(goqu.T("domains"), goqu.On(goqu.I("domains.id").Eq(goqu.I("purls.domain_id")))).
@@ -45,6 +51,9 @@ func (db *Database) Resolve(domain, name string) (string, error) {
 }
 
 func (db *Database) SavePURL(domain, name, target string) error {
+	db.lock.Lock()
+	defer db.lock.Unlock()
+
 	// lookup domain first
 	query := db.db.Select("id").From("domains").Where(goqu.C("name").Eq(domain)).Limit(1)
 
@@ -92,6 +101,9 @@ func (db *Database) SavePURL(domain, name, target string) error {
 }
 
 func (db *Database) CreateDomain(domain string) error {
+	db.lock.Lock()
+	defer db.lock.Unlock()
+
 	stmt := db.db.Insert("domains").
 		Cols("name").
 		Vals(goqu.Vals{domain})
