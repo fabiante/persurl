@@ -27,3 +27,19 @@ jobs:
 
     - name: Build
       run: go build -v ./...
+
+  test-load:
+    runs-on: ubuntu-latest
+    env:
+      TEST_LOAD: 1
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Install Test Runner
+      run: go install github.com/mfridman/tparse@latest
+    - name: Test
+      run: set -o pipefail && go test -json tests/http_load_test.go | tparse -all
