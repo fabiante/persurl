@@ -11,6 +11,12 @@ import (
 	"github.com/fabiante/persurl/tests/load"
 )
 
+// TestLoad creates various stages of load on the given dsl.API.
+//
+// It does this by starting one or more agents which interact with the dsl.API.
+//
+// The agents are started in parallel and run for a given duration. This is done iteratively
+// with an increasing amount of agents and thus load.
 func TestLoad(t *testing.T, api dsl.API) {
 	t.Run("load", func(t *testing.T) {
 		tests := []struct {

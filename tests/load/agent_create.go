@@ -11,7 +11,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// CreateAgent creates PURLs
+// CreateAgent creates PURLs in a given domain with a given interval.
+//
+// Use this agent to simulate a user continuously generating PURLs.
 type CreateAgent struct {
 	Id int
 
@@ -25,6 +27,13 @@ func NewCreateAgent(id int, domain string, createInterval time.Duration, API dsl
 	return &CreateAgent{Id: id, Domain: domain, CreateInterval: createInterval, API: API}
 }
 
+// Run starts this agent's work loop.
+//
+// Run ensures that the agent's Domain exists before starting to create PURLs.
+//
+// The agent runs until a message is sent to the done channel. It will then decrement the given wait group.
+//
+// You should use this method in a dedicated goroutine as this is a blocking function.
 func (a *CreateAgent) Run(t *testing.T, done <-chan struct{}, wg *sync.WaitGroup) {
 	defer wg.Done()
 
