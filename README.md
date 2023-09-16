@@ -22,3 +22,18 @@ some implementations deviate from what PURL was ment to do.
 
 If you find any critical deviations or design flaws which you think should be adressed,
 please open an issue to resolve that.
+
+## Contributing
+
+### Testing
+
+This project tries to implement tests in a behaviour-driven style. If you add / change features, ensure that
+test specifications ensure correct behaviour. Test drivers execute test specifications.
+
+#### Load Tests
+
+Load tests can enabled via the env variable `TEST_LOAD=1`.
+
+These run the application and generate load by running multiple agents simulating user behaviour.
+The motivation of these tests is to ensure that the application can be used for a large user base which
+create large amounts of data.
