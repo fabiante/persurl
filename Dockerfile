@@ -18,4 +18,6 @@ COPY --from=build /persurl /persurl
 
 EXPOSE 8060
 
+ENV GIN_MODE=release
+
 ENTRYPOINT ["/persurl"]
