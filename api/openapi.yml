@@ -26,7 +26,7 @@ paths:
       summary: Check if service is healthy
       tags: [System]
       responses:
-        204:
+        200:
           description: Service is healthy
         500:
           description: Service is not healthy

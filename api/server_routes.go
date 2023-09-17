@@ -41,7 +41,7 @@ func SetupRouting(r gin.IRouter, s *Server) {
 			// in the future this should be extended with actual checks which signal if the application is ready
 			// to receive requests or not.
 
-			ctx.Status(http.StatusNoContent)
+			ctx.JSON(http.StatusOK, "service is ready to receive requests")
 		})
 	}
 }
