@@ -43,15 +43,3 @@ jobs:
       run: go install github.com/mfridman/tparse@latest
     - name: Test
       run: set -o pipefail && go test -json tests/http_load_test.go | tparse -all
-
-  build-image:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.21'
-
-      - name: Build Docker Image
-        run: docker build .
