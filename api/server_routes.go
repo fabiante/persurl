@@ -1,6 +1,8 @@
 package api
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,5 +30,18 @@ func SetupRouting(r gin.IRouter, s *Server) {
 
 		// PURL
 		admin.PUT("/domains/:domain/purls/:name", validName, s.SavePURL)
+	}
+
+	// System endpoints
+	{
+		sys := r.Group("/r")
+
+		sys.GET("/health", func(ctx *gin.Context) {
+			// currently no dedicated health check exists.
+			// in the future this should be extended with actual checks which signal if the application is ready
+			// to receive requests or not.
+
+			ctx.Status(http.StatusNoContent)
+		})
 	}
 }

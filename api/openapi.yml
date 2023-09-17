@@ -14,10 +14,23 @@ tags:
     description: Resolution of PURLs
   - name: Admin
     description: Manage PURLs
+  - name: System
+    description: Endpoints for interacting / managing the overal system
 
 security: []
 
 paths:
+  /s/health:
+    get:
+      operationId: getHealth
+      summary: Check if service is healthy
+      tags: [System]
+      responses:
+        204:
+          description: Service is healthy
+        500:
+          description: Service is not healthy
+
   /r/{domain}/{name}:
     get:
       operationId: resolvePURL
