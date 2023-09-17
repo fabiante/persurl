@@ -34,7 +34,7 @@ func SetupRouting(r gin.IRouter, s *Server) {
 
 	// System endpoints
 	{
-		sys := r.Group("/r")
+		sys := r.Group("/s")
 
 		sys.GET("/health", func(ctx *gin.Context) {
 			// currently no dedicated health check exists.
