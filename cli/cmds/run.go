@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/fabiante/persurl/api"
+	"github.com/fabiante/persurl/config"
 	"github.com/fabiante/persurl/db"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
@@ -16,9 +17,9 @@ func init() {
 	}
 
 	cmd.Run = func(cmd *cobra.Command, args []string) {
-		dataDir := envDataDir()
+		dataDir := config.DataDir()
 
-		dbFile := envDbFile(dataDir)
+		dbFile := config.DbFile(dataDir)
 
 		_, database, err := db.SetupDB(dbFile)
 		if err != nil {

@@ -1,4 +1,4 @@
-package cmds
+package config
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func envDataDir() string {
+func DataDir() string {
 	dataDir := os.Getenv("PERSURL_DATA_DIR")
 	if dataDir == "" {
 		dataDir = "."
@@ -15,7 +15,7 @@ func envDataDir() string {
 	return dataDir
 }
 
-func envDbFile(dataDir string) string {
+func DbFile(dataDir string) string {
 	dbFile := fmt.Sprintf("%s/prod.sqlite", dataDir)
 	log.Printf("using database file: %s", dbFile)
 	return dbFile
