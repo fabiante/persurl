@@ -17,11 +17,7 @@ func init() {
 	}
 
 	cmd.Run = func(cmd *cobra.Command, args []string) {
-		dataDir := config.DataDir()
-
-		dbFile := config.DbFile(dataDir)
-
-		_, database, err := db.SetupDB(dbFile)
+		_, database, err := db.SetupPostgresDB(config.DbDSN())
 		if err != nil {
 			log.Fatalf("setting up database failed: %s", err)
 		}
