@@ -1,13 +1,25 @@
-package db
+package migrations
 
 import (
 	"database/sql"
 	"fmt"
 )
 
-func MigrateDb(db *sql.DB) error {
-	stmts := []string{
-		`create table main.domains
+func Run(db *sql.DB) error {
+	stmts := migrationsSQLite
+
+	for i, stmt := range stmts {
+		_, err := db.Exec(stmt)
+		if err != nil {
+			return fmt.Errorf("stmts[%d] failed: %w", i, err)
+		}
+	}
+
+	return nil
+}
+
+var migrationsSQLite = []string{
+	`create table main.domains
 (
     id   integer      not null
         constraint domains_pk
@@ -17,7 +29,7 @@ func MigrateDb(db *sql.DB) error {
             unique
 )
 `,
-		`
+	`
 create table purls
 (
     id        integer       not null
@@ -32,14 +44,4 @@ create table purls
     constraint purls_pk
         unique (domain_id, name)
 );`,
-	}
-
-	for i, stmt := range stmts {
-		_, err := db.Exec(stmt)
-		if err != nil {
-			return fmt.Errorf("stmts[%d] failed: %w", i, err)
-		}
-	}
-
-	return nil
 }

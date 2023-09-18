@@ -5,8 +5,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/doug-martin/goqu/v9"
-	_ "github.com/doug-martin/goqu/v9/dialect/sqlite3"
 	"github.com/fabiante/persurl/api"
 	"github.com/fabiante/persurl/db"
 	"github.com/gin-gonic/gin"
@@ -19,13 +17,13 @@ func main() {
 
 	dbFile := envDbFile(dataDir)
 
-	database, err := db.SetupDB(dbFile)
+	_, database, err := db.SetupAndMigrateDB(dbFile)
 	if err != nil {
 		log.Fatalf("setting up database failed: %s", err)
 	}
 
 	engine := gin.Default()
-	service := db.NewDatabase(goqu.New("sqlite3", database))
+	service := db.NewDatabase(database)
 	server := api.NewServer(service)
 	api.SetupRouting(engine, server)
 	if err := engine.Run(":8060"); err != nil {

@@ -6,8 +6,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/doug-martin/goqu/v9"
-	_ "github.com/doug-martin/goqu/v9/dialect/sqlite3"
 	"github.com/fabiante/persurl/api"
 	"github.com/fabiante/persurl/db"
 	"github.com/fabiante/persurl/tests/driver"
@@ -22,10 +20,10 @@ func TestWithHTTPDriver(t *testing.T) {
 
 	sqlitePath := "./test_http.sqlite"
 	_ = os.Remove(sqlitePath) // remove to ensure a clean database
-	database, err := db.SetupDB(sqlitePath)
+	_, database, err := db.SetupAndMigrateDB(sqlitePath)
 	require.NoError(t, err, "setting up db failed")
 
-	service := db.NewDatabase(goqu.New("sqlite3", database))
+	service := db.NewDatabase(database)
 	server := api.NewServer(service)
 	api.SetupRouting(handler, server)
 
