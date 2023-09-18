@@ -7,7 +7,7 @@ import (
 	"github.com/lopezator/migrator"
 )
 
-func Run(db *sql.DB) error {
+func RunSQLite(db *sql.DB) error {
 	// Configure migrations
 
 	m, err := migrator.New(

@@ -16,7 +16,7 @@ func SetupAndMigrateDB(path string) (*sql.DB, *goqu.Database, error) {
 		return nil, nil, err
 	}
 
-	err = migrations.Run(db)
+	err = migrations.RunSQLite(db)
 	if err != nil {
 		return nil, nil, fmt.Errorf("migrating sqlite database failed: %s", err)
 	}
