@@ -3,23 +3,43 @@ package migrations
 import (
 	"database/sql"
 	"fmt"
+
+	"github.com/lopezator/migrator"
 )
 
 func Run(db *sql.DB) error {
-	stmts := migrationsSQLite
+	// Configure migrations
 
-	for i, stmt := range stmts {
-		_, err := db.Exec(stmt)
-		if err != nil {
-			return fmt.Errorf("stmts[%d] failed: %w", i, err)
-		}
+	m, err := migrator.New(
+		// type cast is required because []*migrator.MigrationNoTx is not assignable to []migrator.Migration
+		migrator.Migrations(migrationsSQLite...),
+	)
+	if err != nil {
+		return fmt.Errorf("initializing migrations failed: %w", err)
+	}
+
+	// Migrate up
+	if err := m.Migrate(db); err != nil {
+		return fmt.Errorf("running migrations failed: %w", err)
 	}
 
 	return nil
 }
 
-var migrationsSQLite = []string{
-	`create table main.domains
+func newMigration(name string, query string) *migrator.MigrationNoTx {
+	return &migrator.MigrationNoTx{
+		Name: name,
+		Func: func(db *sql.DB) error {
+			if _, err := db.Exec(query); err != nil {
+				return err
+			}
+			return nil
+		},
+	}
+}
+
+var migrationsSQLite = []any{
+	newMigration("2023-09-18-00000001-CreateTableDomains", `create table main.domains
 (
     id   integer      not null
         constraint domains_pk
@@ -27,10 +47,9 @@ var migrationsSQLite = []string{
     name varchar(128) not null
         constraint domains_pk2
             unique
-)
-`,
-	`
-create table purls
+)`,
+	),
+	newMigration("2023-09-18-00000002-CreateTablePurls", `create table purls
 (
     id        integer       not null
         constraint puls_pk
@@ -43,5 +62,6 @@ create table purls
     target    varchar(4096) not null,
     constraint purls_pk
         unique (domain_id, name)
-);`,
+)`,
+	),
 }
