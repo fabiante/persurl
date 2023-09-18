@@ -30,17 +30,7 @@ func TestLoad(t *testing.T, api dsl.API) {
 				Duration:       10 * time.Second,
 			},
 			{
-				CreateAgents:   2,
-				CreateInterval: 50 * time.Millisecond,
-				Duration:       10 * time.Second,
-			},
-			{
-				CreateAgents:   5,
-				CreateInterval: 50 * time.Millisecond,
-				Duration:       10 * time.Second,
-			},
-			{
-				CreateAgents:   15,
+				CreateAgents:   10,
 				CreateInterval: 50 * time.Millisecond,
 				Duration:       10 * time.Second,
 			},
@@ -51,6 +41,21 @@ func TestLoad(t *testing.T, api dsl.API) {
 			},
 			{
 				CreateAgents:   50,
+				CreateInterval: 50 * time.Millisecond,
+				Duration:       10 * time.Second,
+			},
+			{
+				CreateAgents:   100,
+				CreateInterval: 50 * time.Millisecond,
+				Duration:       10 * time.Second,
+			},
+			{
+				CreateAgents:   250,
+				CreateInterval: 50 * time.Millisecond,
+				Duration:       10 * time.Second,
+			},
+			{
+				CreateAgents:   500,
 				CreateInterval: 50 * time.Millisecond,
 				Duration:       10 * time.Second,
 			},
