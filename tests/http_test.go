@@ -20,7 +20,7 @@ func TestWithHTTPDriver(t *testing.T) {
 
 	sqlitePath := "./test_http.sqlite"
 	_ = os.Remove(sqlitePath) // remove to ensure a clean database
-	_, database, err := db.SetupDB(sqlitePath)
+	_, database, err := db.SetupAndMigrateDB(sqlitePath)
 	require.NoError(t, err, "setting up db failed")
 
 	service := db.NewDatabase(database)

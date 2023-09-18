@@ -10,15 +10,24 @@ import (
 	_ "modernc.org/sqlite"
 )
 
+func SetupAndMigrateDB(path string) (*sql.DB, *goqu.Database, error) {
+	db, gdb, err := SetupDB(path)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	err = migrations.Run(db)
+	if err != nil {
+		return nil, nil, fmt.Errorf("migrating sqlite database failed: %s", err)
+	}
+
+	return db, gdb, nil
+}
+
 func SetupDB(path string) (*sql.DB, *goqu.Database, error) {
 	database, err := sql.Open("sqlite", path)
 	if err != nil {
 		return nil, nil, fmt.Errorf("opening sqlite database failed: %s", err)
-	}
-
-	err = migrations.Run(database)
-	if err != nil {
-		return nil, nil, fmt.Errorf("migrating sqlite database failed: %s", err)
 	}
 
 	return database, goqu.New("sqlite3", database), nil
