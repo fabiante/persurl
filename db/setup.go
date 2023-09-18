@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/fabiante/persurl/db/migrations"
 	_ "modernc.org/sqlite"
 )
 
@@ -13,7 +14,7 @@ func SetupDB(path string) (*sql.DB, error) {
 		return nil, fmt.Errorf("opening sqlite database failed: %s", err)
 	}
 
-	err = MigrateDb(database)
+	err = migrations.Run(database)
 	if err != nil {
 		return nil, fmt.Errorf("migrating sqlite database failed: %s", err)
 	}
