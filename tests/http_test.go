@@ -6,7 +6,6 @@ import (
 	"os"
 	"testing"
 
-	_ "github.com/doug-martin/goqu/v9/dialect/sqlite3"
 	"github.com/fabiante/persurl/api"
 	"github.com/fabiante/persurl/db"
 	"github.com/fabiante/persurl/tests/driver"
