@@ -28,7 +28,7 @@ func TestLoadWithHTTPDriver(t *testing.T) {
 	_, database, err := db.SetupAndMigratePostgresDB(config.DbDSN())
 	require.NoError(t, err, "setting up db failed")
 
-	err = emptyTables(database, "purls", "domains")
+	err = db.EmptyTables(database, "purls", "domains")
 	require.NoError(t, err, "truncating tables failed")
 
 	service := db.NewDatabase(database)
