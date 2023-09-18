@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -9,7 +10,15 @@ import (
 )
 
 func LoadEnv() {
-	err := godotenv.Load()
+	path := ".env"
+
+	// check if .env file exists - if not, exit early.
+	_, err := os.Stat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return
+	}
+
+	err = godotenv.Load(path)
 	if err != nil {
 		panic(fmt.Errorf("loading env failed: %w", err))
 	}
