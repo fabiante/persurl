@@ -8,8 +8,7 @@ import (
 	"github.com/doug-martin/goqu/v9"
 	"github.com/doug-martin/goqu/v9/exec"
 	"github.com/fabiante/persurl/app"
-	"modernc.org/sqlite"
-	sqlite3 "modernc.org/sqlite/lib"
+	"github.com/lib/pq"
 )
 
 // Database implements the applications core logic.
@@ -114,15 +113,23 @@ func (db *Database) CreateDomain(domain string) error {
 	}
 }
 
+const (
+	pgErrUniqueKeyViolation = "23505"
+)
+
 func mapDBError(err error) error {
-	var serr *sqlite.Error
+	var serr *pq.Error
 	if !errors.As(err, &serr) {
 		return err
 	}
 
-	code := serr.Code()
+	// Error codes
+	// SQLite: https://www.sqlite.org/rescode.html
+	// Postgres: http://www.postgresql.org/docs/9.3/static/errcodes-appendix.html
+
+	code := serr.Code
 	switch code {
-	case sqlite3.SQLITE_CONSTRAINT_UNIQUE:
+	case pgErrUniqueKeyViolation:
 		return fmt.Errorf("%w: %s", app.ErrBadRequest, err)
 	default:
 		return fmt.Errorf("unexpected error: %w", err)
