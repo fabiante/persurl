@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	"github.com/doug-martin/goqu/v9"
-	_ "github.com/doug-martin/goqu/v9/dialect/sqlite3"
 	"github.com/doug-martin/goqu/v9/exec"
 	"github.com/fabiante/persurl/app"
 	"modernc.org/sqlite"
