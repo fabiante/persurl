@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      PERSURL_DB_DSN: postgresql://persurl:persurl@localhost:5432/persurl?sslmode=disable
     steps:
     - uses: actions/checkout@v3
     - name: Set up Go
@@ -20,6 +22,8 @@ jobs:
     - name: Lint API Spec
       run: npx @redocly/cli lint api/openapi.yml
 
+    - name: Run database
+      run: docker compose up --quiet-pull -d
     - name: Install Test Runner
       run: go install github.com/mfridman/tparse@latest
     - name: Test
@@ -32,6 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TEST_LOAD: 1
+      PERSURL_DB_DSN: postgresql://persurl:persurl@localhost:5432/persurl?sslmode=disable
     steps:
     - uses: actions/checkout@v3
     - name: Set up Go
@@ -39,6 +44,8 @@ jobs:
       with:
         go-version: '1.21'
 
+    - name: Run database
+      run: docker compose up --quiet-pull -d
     - name: Install Test Runner
       run: go install github.com/mfridman/tparse@latest
     - name: Test
