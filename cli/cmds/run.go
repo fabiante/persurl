@@ -20,7 +20,7 @@ func init() {
 
 		dbFile := envDbFile(dataDir)
 
-		_, database, err := db.SetupAndMigrateDB(dbFile)
+		_, database, err := db.SetupDB(dbFile)
 		if err != nil {
 			log.Fatalf("setting up database failed: %s", err)
 		}
