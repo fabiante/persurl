@@ -20,7 +20,7 @@ func TestWithHTTPDriver(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	handler := gin.Default()
 
-	_, database, err := db.SetupAndMigratePostgresDB(config.DbDSN())
+	_, database, err := db.SetupAndMigratePostgresDB(config.DbDSN(), config.DbMaxConnections())
 	require.NoError(t, err, "setting up db failed")
 
 	err = db.EmptyTables(database, "purls", "domains")

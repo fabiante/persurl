@@ -10,8 +10,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func SetupAndMigratePostgresDB(dsn string) (*sql.DB, *goqu.Database, error) {
-	db, gdb, err := SetupPostgresDB(dsn)
+func SetupAndMigratePostgresDB(dsn string, maxConnections int) (*sql.DB, *goqu.Database, error) {
+	db, gdb, err := SetupPostgresDB(dsn, maxConnections)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -24,11 +24,13 @@ func SetupAndMigratePostgresDB(dsn string) (*sql.DB, *goqu.Database, error) {
 	return db, gdb, nil
 }
 
-func SetupPostgresDB(dsn string) (*sql.DB, *goqu.Database, error) {
+func SetupPostgresDB(dsn string, maxConnections int) (*sql.DB, *goqu.Database, error) {
 	database, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, nil, fmt.Errorf("opening postgres database failed: %s", err)
 	}
+
+	database.SetMaxOpenConns(maxConnections)
 
 	return database, goqu.New("postgres", database), nil
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -45,4 +46,18 @@ func DbDSN() string {
 		log.Fatalf("persurl db dsn may not be empty")
 	}
 	return dsn
+}
+
+func DbMaxConnections() int {
+	val := os.Getenv("PERSURL_DB_MAX_CONNECTIONS")
+	if val == "" {
+		val = "10"
+	}
+
+	maxCon, err := strconv.ParseInt(val, 10, 32)
+	if err != nil {
+		log.Fatalf("invalid db max connection parameter %s", val)
+	}
+
+	return int(maxCon)
 }
