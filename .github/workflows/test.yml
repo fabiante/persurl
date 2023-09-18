@@ -23,7 +23,7 @@ jobs:
       run: npx @redocly/cli lint api/openapi.yml
 
     - name: Run database
-      run: docker compose up --quiet-pull -d
+      run: docker compose up --quiet-pull -d && sleep 5
     - name: Install Test Runner
       run: go install github.com/mfridman/tparse@latest
     - name: Test
@@ -45,7 +45,7 @@ jobs:
         go-version: '1.21'
 
     - name: Run database
-      run: docker compose up --quiet-pull -d
+      run: docker compose up --quiet-pull -d && sleep 5
     - name: Install Test Runner
       run: go install github.com/mfridman/tparse@latest
     - name: Test
