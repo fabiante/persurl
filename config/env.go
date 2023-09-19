@@ -28,6 +28,9 @@ func LoadEnv() {
 func DbDSN() string {
 	dsn := os.Getenv("PERSURL_DB_DSN")
 	if dsn == "" {
+		dsn = os.Getenv("DATABASE_URL")
+	}
+	if dsn == "" {
 		log.Fatalf("persurl db dsn may not be empty")
 	}
 	return dsn
