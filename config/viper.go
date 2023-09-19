@@ -28,9 +28,7 @@ func setupViper() *viper.Viper {
 	v.SetDefault("db.max_connections", 10)
 
 	// env binding
-	check(v.BindEnv("test_load", "TEST_LOAD"))
-	check(v.BindEnv("db.dsn", "PERSURL_DB_DSN", "DATABASE_URL"))
-	check(v.BindEnv("db.max_connections", "PERSURL_DB_MAX_CONNECTIONS"))
+	check(setupEnv(v))
 
 	// trigger config parsing
 	check(v.ReadInConfig())
