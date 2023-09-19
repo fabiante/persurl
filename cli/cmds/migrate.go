@@ -21,7 +21,7 @@ func init() {
 			log.Fatalf("setting up database failed: %s", err)
 		}
 
-		err = migrations.RunSQLite(database)
+		err = migrations.RunPostgres(database)
 		if err != nil {
 			log.Fatalf("migrating database failed: %s", err)
 		}
