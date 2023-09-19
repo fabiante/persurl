@@ -17,5 +17,14 @@ services:
       timeout: 5s
       retries: 5
 
+  pgadmin:
+    profiles: ["pgadmin"]
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5454:80"
+
 volumes:
   db:
