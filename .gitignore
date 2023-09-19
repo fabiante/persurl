@@ -1,3 +1,9 @@
+# devtools
 .idea
+
+# config files
 /.env
+/app.*
+
+# other
 *.sqlite
