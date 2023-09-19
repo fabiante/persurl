@@ -1,6 +1,8 @@
 package config
 
 import (
+	"errors"
+
 	"github.com/spf13/viper"
 )
 
@@ -30,8 +32,13 @@ func setupViper() *viper.Viper {
 	// env binding
 	check(setupEnv(v))
 
-	// trigger config parsing
-	check(v.ReadInConfig())
+	// trigger config parsing - optional
+	if err := v.ReadInConfig(); err != nil {
+		var configFileNotFoundError viper.ConfigFileNotFoundError
+		if !errors.As(err, &configFileNotFoundError) {
+			check(err)
+		}
+	}
 
 	return v
 }
