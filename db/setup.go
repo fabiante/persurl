@@ -5,30 +5,32 @@ import (
 	"fmt"
 
 	"github.com/doug-martin/goqu/v9"
-	_ "github.com/doug-martin/goqu/v9/dialect/sqlite3"
+	_ "github.com/doug-martin/goqu/v9/dialect/postgres"
 	"github.com/fabiante/persurl/db/migrations"
-	_ "modernc.org/sqlite"
+	_ "github.com/lib/pq"
 )
 
-func SetupAndMigrateDB(path string) (*sql.DB, *goqu.Database, error) {
-	db, gdb, err := SetupDB(path)
+func SetupAndMigratePostgresDB(dsn string, maxConnections int) (*sql.DB, *goqu.Database, error) {
+	db, gdb, err := SetupPostgresDB(dsn, maxConnections)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	err = migrations.Run(db)
+	err = migrations.RunPostgres(db)
 	if err != nil {
-		return nil, nil, fmt.Errorf("migrating sqlite database failed: %s", err)
+		return nil, nil, fmt.Errorf("migrating postgres database failed: %s", err)
 	}
 
 	return db, gdb, nil
 }
 
-func SetupDB(path string) (*sql.DB, *goqu.Database, error) {
-	database, err := sql.Open("sqlite", path)
+func SetupPostgresDB(dsn string, maxConnections int) (*sql.DB, *goqu.Database, error) {
+	database, err := sql.Open("postgres", dsn)
 	if err != nil {
-		return nil, nil, fmt.Errorf("opening sqlite database failed: %s", err)
+		return nil, nil, fmt.Errorf("opening postgres database failed: %s", err)
 	}
 
-	return database, goqu.New("sqlite3", database), nil
+	database.SetMaxOpenConns(maxConnections)
+
+	return database, goqu.New("postgres", database), nil
 }

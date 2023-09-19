@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/fabiante/persurl/api"
+	"github.com/fabiante/persurl/config"
 	"github.com/fabiante/persurl/db"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
@@ -16,11 +17,7 @@ func init() {
 	}
 
 	cmd.Run = func(cmd *cobra.Command, args []string) {
-		dataDir := envDataDir()
-
-		dbFile := envDbFile(dataDir)
-
-		_, database, err := db.SetupDB(dbFile)
+		_, database, err := db.SetupPostgresDB(config.DbDSN(), config.DbMaxConnections())
 		if err != nil {
 			log.Fatalf("setting up database failed: %s", err)
 		}

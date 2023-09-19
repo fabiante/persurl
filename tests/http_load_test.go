@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/fabiante/persurl/api"
+	"github.com/fabiante/persurl/config"
 	"github.com/fabiante/persurl/db"
 	"github.com/fabiante/persurl/tests/driver"
 	"github.com/fabiante/persurl/tests/specs"
@@ -15,6 +16,8 @@ import (
 )
 
 func TestLoadWithHTTPDriver(t *testing.T) {
+	config.LoadEnv()
+
 	if os.Getenv("TEST_LOAD") == "" {
 		t.Skip("load tests are skipped because TEST_LOAD env variable is not set")
 	}
@@ -22,10 +25,11 @@ func TestLoadWithHTTPDriver(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	handler := gin.Default()
 
-	sqlitePath := "./test_load_http.sqlite"
-	_ = os.Remove(sqlitePath) // remove to ensure a clean database
-	_, database, err := db.SetupAndMigrateDB(sqlitePath)
+	_, database, err := db.SetupAndMigratePostgresDB(config.DbDSN(), config.DbMaxConnections())
 	require.NoError(t, err, "setting up db failed")
+
+	err = db.EmptyTables(database, "purls", "domains")
+	require.NoError(t, err, "truncating tables failed")
 
 	service := db.NewDatabase(database)
 	server := api.NewServer(service)

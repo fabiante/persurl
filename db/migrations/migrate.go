@@ -7,12 +7,12 @@ import (
 	"github.com/lopezator/migrator"
 )
 
-func Run(db *sql.DB) error {
+func RunPostgres(db *sql.DB) error {
 	// Configure migrations
 
 	m, err := migrator.New(
 		// type cast is required because []*migrator.MigrationNoTx is not assignable to []migrator.Migration
-		migrator.Migrations(migrationsSQLite...),
+		migrator.Migrations(migrationsPostgres...),
 	)
 	if err != nil {
 		return fmt.Errorf("initializing migrations failed: %w", err)
@@ -38,29 +38,29 @@ func newMigration(name string, query string) *migrator.MigrationNoTx {
 	}
 }
 
-var migrationsSQLite = []any{
-	newMigration("2023-09-18-00000001-CreateTableDomains", `create table main.domains
+var migrationsPostgres = []any{
+	newMigration("2023-09-18-00000001-CreateTableDomains", `create table domains
 (
-    id   integer      not null
-        constraint domains_pk
-            primary key autoincrement,
-    name varchar(128) not null
+    id   serial
         constraint domains_pk2
-            unique
+            unique,
+    name varchar(128) not null
+        constraint domains_pk
+            primary key
 )`,
 	),
 	newMigration("2023-09-18-00000002-CreateTablePurls", `create table purls
 (
-    id        integer       not null
-        constraint puls_pk
-            primary key autoincrement,
+    id        serial
+        constraint purls_pk
+            primary key,
     domain_id integer       not null
         constraint purls_domains_id_fk
-            references domains
-            on delete restrict,
+            references domains (id)
+			on delete restrict,
     name      varchar(128)  not null,
     target    varchar(4096) not null,
-    constraint purls_pk
+    constraint purls_pk2
         unique (domain_id, name)
 )`,
 	),
