@@ -15,8 +15,6 @@ import (
 )
 
 func TestWithHTTPDriver(t *testing.T) {
-	config.LoadEnv()
-
 	gin.SetMode(gin.TestMode)
 	handler := gin.Default()
 

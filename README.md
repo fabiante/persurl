@@ -2,6 +2,17 @@
 
 Application to manage and resolve [PURL](https://en.wikipedia.org/wiki/Persistent_uniform_resource_locator) links.
 
+## Usage
+
+### Configuration
+
+The application can be configured using:
+
+- env variables, prefixed with `PERSURL_` (example: `PERSURL_DB_DSN`)
+- config files (example: `app.yml`)
+
+Have a look at `example.config.yml` for an example configuration.
+
 ## Documentation
 
 Until the documentation becomes large enough, this README will be used to
@@ -32,7 +43,7 @@ test specifications ensure correct behaviour. Test drivers execute test specific
 
 #### Load Tests
 
-Load tests can enabled via the env variable `TEST_LOAD=1`.
+Load tests can enabled via the env variable `TEST_LOAD=1` or setting `test_load` to `1` in your config file.
 
 These run the application and generate load by running multiple agents simulating user behaviour.
 The motivation of these tests is to ensure that the application can be used for a large user base which

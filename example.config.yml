@@ -1,0 +1,8 @@
+# Example configuration - copy as app.yml and modify
+
+# Enable this if you want to run load tests
+# test_load: true
+
+db:
+  dsn: postgresql://persurl:persurl@localhost:5432/persurl?sslmode=disable
+  max_connections: 10
