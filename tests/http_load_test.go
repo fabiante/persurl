@@ -3,7 +3,6 @@ package tests
 import (
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/fabiante/persurl/api"
@@ -16,10 +15,8 @@ import (
 )
 
 func TestLoadWithHTTPDriver(t *testing.T) {
-	config.LoadEnv()
-
-	if os.Getenv("TEST_LOAD") == "" {
-		t.Skip("load tests are skipped because TEST_LOAD env variable is not set")
+	if !config.TestLoad() {
+		t.Skip("load tests are skipped because they are not enabled via config")
 	}
 
 	gin.SetMode(gin.TestMode)
