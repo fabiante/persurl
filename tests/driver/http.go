@@ -29,21 +29,21 @@ func NewHTTPDriver(basePath string, transport http.RoundTripper) *HTTPDriver {
 }
 
 func (driver *HTTPDriver) ResolvePURL(domain string, name string) (*url.URL, error) {
-	res, err := driver.Client.Get(fmt.Sprintf("%s/r/%s/%s", driver.BasePath, domain, name))
+	response, err := driver.Client.Get(fmt.Sprintf("%s/r/%s/%s", driver.BasePath, domain, name))
 	if err != nil {
 		return nil, err
 	}
 
-	switch res.StatusCode {
+	switch response.StatusCode {
 	case http.StatusFound:
 		break
 	case http.StatusNotFound:
-		return nil, fmt.Errorf("%w: status %d returned", app.ErrNotFound, res.StatusCode)
+		return nil, fmt.Errorf("%w: status %d returned", app.ErrNotFound, response.StatusCode)
 	default:
-		return nil, fmt.Errorf("unexpected status code: %d", res.StatusCode)
+		return nil, fmt.Errorf("unexpected status code: %d", response.StatusCode)
 	}
 
-	loc, err := res.Location()
+	loc, err := response.Location()
 	if err != nil {
 		return nil, fmt.Errorf("invalid location: %s", err)
 	}
@@ -85,17 +85,17 @@ func (driver *HTTPDriver) CreateDomain(name string) error {
 		return err
 	}
 
-	res, err := driver.Client.Do(req)
+	response, err := driver.Client.Do(req)
 	if err != nil {
 		return err
 	}
 
-	switch res.StatusCode {
+	switch response.StatusCode {
 	case http.StatusNoContent:
 		return nil
 	case http.StatusBadRequest:
-		return fmt.Errorf("%w: status %d returned", app.ErrBadRequest, res.StatusCode)
+		return fmt.Errorf("%w: status %d returned", app.ErrBadRequest, response.StatusCode)
 	default:
-		return fmt.Errorf("unexpected status code: %d", res.StatusCode)
+		return fmt.Errorf("unexpected status code: %d", response.StatusCode)
 	}
 }
