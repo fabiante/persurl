@@ -1,12 +1,23 @@
 package api
 
 import (
+	_ "embed"
 	"net/http"
 
+	"github.com/DEXPRO-Solutions-GmbH/swaggerui"
 	"github.com/gin-gonic/gin"
 )
 
+//go:embed openapi.yml
+var openAPI []byte
+
 func SetupRouting(r gin.IRouter, s *Server) {
+	if swaggerUI, err := swaggerui.NewHandler(openAPI, swaggerui.WithReplaceServerUrls()); err != nil {
+		panic(err)
+	} else {
+		swaggerUI.Register(r)
+	}
+
 	validDomain := validPathVar("domain", regexNamed)
 	validName := validPathVar("name", regexNamed)
 
