@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/fabiante/persurl/api/res"
@@ -47,12 +48,14 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 	err := s.service.SavePURL(domain, name, req.Target)
 	switch true {
 	case err == nil:
-		ctx.Status(http.StatusNoContent)
+		break
 	case errors.Is(err, app.ErrBadRequest):
 		respondWithError(ctx, http.StatusBadRequest, err)
 	default:
 		respondWithError(ctx, http.StatusInternalServerError, err)
 	}
+
+	ctx.JSON(http.StatusOK, res.NewSavePURLResponse(fmt.Sprintf("/r/%s/%s", domain, name)))
 }
 
 func (s *Server) CreateDomain(ctx *gin.Context) {
