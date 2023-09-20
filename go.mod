@@ -6,7 +6,7 @@ require (
 	github.com/DEXPRO-Solutions-GmbH/swaggerui v1.1.0
 	github.com/doug-martin/goqu/v9 v9.18.0
 	github.com/gin-gonic/gin v1.9.1
-	github.com/lib/pq v1.10.1
+	github.com/lib/pq v1.10.9
 	github.com/lopezator/migrator v0.3.1
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
