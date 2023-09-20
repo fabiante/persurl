@@ -54,11 +54,19 @@ func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
 
 	t.Run("can create new PURL", func(t *testing.T) {
 		domain := "my-domain-123456"
-		purl := dsl.NewPURL(domain, "my-name3456345663456", mustParseURL("https://google.com"))
-
 		dsl.GivenExistingDomain(t, admin, domain)
-		// TODO: Assert non-existence of purl to be created
-		require.NoError(t, admin.SavePURL(purl), "creating purl failed")
+
+		validPurls := []*dsl.PURL{
+			dsl.NewPURL(domain, "my-name3456345663456", mustParseURL("https://google.com")),
+			dsl.NewPURL(domain, "my-purl.com", mustParseURL("https://google.com")),
+		}
+
+		for i, purl := range validPurls {
+			t.Run(fmt.Sprintf("valid[%d]", i), func(t *testing.T) {
+				// TODO: Assert non-existence of purl to be created
+				require.NoError(t, admin.SavePURL(purl), "creating purl failed")
+			})
+		}
 	})
 
 	t.Run("can update existing purl", func(t *testing.T) {
