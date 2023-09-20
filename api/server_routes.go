@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/DEXPRO-Solutions-GmbH/swaggerui"
+	"github.com/fabiante/persurl/webapp"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,6 +18,8 @@ func SetupRouting(r gin.IRouter, s *Server) {
 	} else {
 		swaggerUI.Register(r)
 	}
+
+	webapp.Register(r)
 
 	validDomain := validPathVar("domain", regexNamed)
 	validName := validPathVar("name", regexNamed)
