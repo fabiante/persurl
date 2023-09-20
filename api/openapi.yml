@@ -123,4 +123,4 @@ components:
     Named:
       type: string
       description: A name safe for URL usage
-      pattern: "^[a-zA-Z0-9_-]+$"
+      pattern: "^[a-zA-Z0-9\\._-]+$"
