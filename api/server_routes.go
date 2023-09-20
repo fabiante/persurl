@@ -57,5 +57,7 @@ func SetupRouting(r gin.IRouter, s *Server) {
 
 			ctx.JSON(http.StatusOK, "service is ready to receive requests")
 		})
+
+		sys.GET("/stats/public", s.GetPublicStats)
 	}
 }
