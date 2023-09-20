@@ -21,6 +21,9 @@ body {
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
+
+	background: rgb(7,35,62);
+	background: linear-gradient(0deg, rgba(7,35,62,1) 0%, rgba(11,70,126,1) 100%);
 }
 
 header {
@@ -64,7 +67,7 @@ main {
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		color: #ccc;
+		color: #eee;
 		background-color: #1a1a1a;
 	}
 }
