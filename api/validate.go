@@ -13,7 +13,7 @@ var regexNamed *regexp.Regexp
 func init() {
 	// regexNamed is used to validate everything that has a name. See OpenAPI
 	// for more information.
-	regexNamed = regexp.MustCompile(`^[a-zA-Z0-9_-]+$`)
+	regexNamed = regexp.MustCompile(`^[a-zA-Z0-9\\._-]+$`)
 }
 
 // validPathVar is a middleware that validates a path variable against a
