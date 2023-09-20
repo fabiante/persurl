@@ -1,0 +1,3 @@
+This keeps the dist dir in version control.
+This is required because embed.go is build during tests and would fail if
+the dist directory would not exist.
