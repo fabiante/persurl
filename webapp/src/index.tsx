@@ -5,6 +5,7 @@ import { Header } from './components/Header.jsx';
 import { Home } from './pages/Home';
 import { NotFound } from './pages/_404.jsx';
 import './style.css';
+import {route} from "./route";
 
 export function App() {
 	return (
@@ -12,7 +13,7 @@ export function App() {
 			{/*<Header />*/}
 			<main>
 				<Router>
-					<Route path="/" component={Home} />
+					<Route path={route("/")} component={Home} />
 					<Route default component={NotFound} />
 				</Router>
 			</main>
