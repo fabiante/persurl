@@ -10,8 +10,9 @@ import (
 //
 // This is done by simply creating it.
 func GivenExistingPURL(t *testing.T, service AdminAPI, purl *PURL) {
-	err := service.SavePURL(purl)
+	path, err := service.SavePURL(purl)
 	require.NoError(t, err, "saving purl failed")
+	require.NotEmpty(t, path)
 }
 
 // GivenExistingDomain ensures that a Domain is known to the application.

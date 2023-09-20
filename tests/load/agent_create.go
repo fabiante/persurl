@@ -45,8 +45,9 @@ func (a *CreateAgent) Run(t *testing.T, done <-chan struct{}, wg *sync.WaitGroup
 	for {
 		name := fmt.Sprintf("purl-%d", i)
 
-		err := a.API.SavePURL(dsl.NewPURL(a.Domain, name, target))
+		path, err := a.API.SavePURL(dsl.NewPURL(a.Domain, name, target))
 		require.NoError(t, err)
+		require.NotEmpty(t, path)
 
 		i += 1
 		select {

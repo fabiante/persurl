@@ -37,7 +37,7 @@ func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
 
 		for i, purl := range invalid {
 			t.Run(fmt.Sprintf("invalid[%d]", i), func(t *testing.T) {
-				err := admin.SavePURL(purl)
+				_, err := admin.SavePURL(purl)
 				require.Error(t, err)
 				//require.ErrorIs(t, err, app.ErrBadRequest) // TODO: Some tests cause a 404 with the http driver.
 			})
@@ -48,7 +48,7 @@ func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
 		domain := "this-domain-does-not-exist-it-should-not"
 		purl := dsl.NewPURL(domain, "my-name3456334654645663456", mustParseURL("https://google.com"))
 
-		err := admin.SavePURL(purl)
+		_, err := admin.SavePURL(purl)
 		require.ErrorIs(t, err, app.ErrBadRequest)
 	})
 
@@ -64,7 +64,9 @@ func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
 		for i, purl := range validPurls {
 			t.Run(fmt.Sprintf("valid[%d]", i), func(t *testing.T) {
 				// TODO: Assert non-existence of purl to be created
-				require.NoError(t, admin.SavePURL(purl), "creating purl failed")
+				path, err := admin.SavePURL(purl)
+				require.NoError(t, err, "creating purl failed")
+				require.NotEmpty(t, path)
 			})
 		}
 	})
@@ -76,7 +78,9 @@ func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
 		dsl.GivenExistingDomain(t, admin, domain)
 		dsl.GivenExistingPURL(t, admin, purl)
 
-		require.NoError(t, admin.SavePURL(purl), "updating existing purl failed")
+		path, err := admin.SavePURL(purl)
+		require.NoError(t, err, "updating existing purl failed")
+		require.NotEmpty(t, path)
 	})
 }
 
