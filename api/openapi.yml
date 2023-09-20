@@ -67,8 +67,16 @@ paths:
               required:
                 - target
       responses:
-        204:
+        200:
           description: PURL created or updated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  path:
+                    type: string
+                    example: /r/your-domain/your-purl
         400:
           $ref: "#/components/responses/BadRequest"
 
