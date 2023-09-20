@@ -101,6 +101,34 @@ func (db *Database) CreateDomain(domain string) error {
 	}
 }
 
+func (db *Database) DetermineServiceStats() (*app.Stats, error) {
+	stat := &app.Stats{}
+	var errs []error
+	var err error
+
+	stat.DomainsTotal, err = db.countRows("domains", "id")
+	errs = append(errs, err)
+
+	stat.PurlsTotal, err = db.countRows("purls", "id")
+	errs = append(errs, err)
+
+	return stat, errors.Join(errs...)
+}
+
+func (db *Database) countRows(table string, column string) (int, error) {
+	var count int
+
+	found, err := db.db.From("domains").Select(goqu.COUNT(goqu.C("id"))).ScanVal(&count)
+	switch {
+	case err != nil:
+		return 0, fmt.Errorf("failed to count rows of table %s: %w", table, err)
+	case !found:
+		return 0, fmt.Errorf("failed to count rows of table %s, no rows found: %w", table, err)
+	}
+
+	return count, nil
+}
+
 const (
 	pgErrUniqueKeyViolation = "23505"
 )
