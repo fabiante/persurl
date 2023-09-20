@@ -15,7 +15,7 @@ tags:
   - name: Admin
     description: Manage PURLs
   - name: System
-    description: Endpoints for interacting / managing the overal system
+    description: Endpoints for interacting / managing the overall system
 
 security: []
 
@@ -30,6 +30,24 @@ paths:
           description: Service is healthy
         500:
           description: Service is not healthy
+
+  /s/stats/public:
+    get:
+      operationId: getPublicStats
+      summary: Get public stats about this system
+      tags: [System]
+      responses:
+        200:
+          description: Returns stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  domains_total:
+                    type: integer
+                  purls_total:
+                    type: integer
 
   /r/{domain}/{name}:
     get:
