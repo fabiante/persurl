@@ -1,0 +1,73 @@
+:root {
+	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	font-weight: 400;
+
+	color: #222;
+	background-color: #ffffff;
+
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	margin: 0;
+}
+
+#app {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+
+	background: rgb(7,35,62);
+	background: linear-gradient(0deg, rgba(7,35,62,1) 0%, rgba(11,70,126,1) 100%);
+}
+
+header {
+	display: flex;
+	justify-content: flex-end;
+	background-color: #43a047;
+}
+
+header nav {
+	display: flex;
+}
+
+header a {
+	color: #fff;
+	padding: 0.75rem;
+	text-decoration: none;
+}
+
+header a.active {
+	background-color: #0005;
+}
+
+header a:hover {
+	background-color: #0008;
+}
+
+main {
+	flex: auto;
+	display: flex;
+	align-items: center;
+	max-width: 1280px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+@media (max-width: 639px) {
+	main {
+		margin: 2rem;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		color: #eee;
+		background-color: #1a1a1a;
+	}
+}
