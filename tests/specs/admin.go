@@ -99,8 +99,17 @@ func testDomainAdmin(t *testing.T, admin dsl.AdminAPI) {
 	})
 
 	t.Run("can create valid domain", func(t *testing.T) {
-		err := admin.CreateDomain("awesome-domain-unique-name-123")
-		require.NoError(t, err)
+		valid := []string{
+			"awesome-domain-unique-name-123",
+			"awesome.com",
+		}
+
+		for i, v := range valid {
+			t.Run(fmt.Sprintf("valid[%d]", i), func(*testing.T) {
+				err := admin.CreateDomain(v)
+				require.NoError(t, err)
+			})
+		}
 	})
 
 	t.Run("can't create duplicate domain", func(t *testing.T) {
