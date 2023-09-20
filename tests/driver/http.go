@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/fabiante/persurl/api/res"
 	"github.com/fabiante/persurl/app"
 	"github.com/fabiante/persurl/tests/dsl"
 )
@@ -51,32 +52,39 @@ func (driver *HTTPDriver) ResolvePURL(domain string, name string) (*url.URL, err
 	return loc, nil
 }
 
-func (driver *HTTPDriver) SavePURL(purl *dsl.PURL) error {
+func (driver *HTTPDriver) SavePURL(purl *dsl.PURL) (string, error) {
 	body := bytes.NewBuffer([]byte{})
 	err := json.NewEncoder(body).Encode(map[string]string{
 		"target": purl.Target.String(),
 	})
 	if err != nil {
-		return err
+		return "", err
 	}
 	req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s/a/domains/%s/purls/%s", driver.BasePath, purl.Domain, purl.Name), body)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	res, err := driver.Client.Do(req)
+	response, err := driver.Client.Do(req)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	switch res.StatusCode {
-	case http.StatusNoContent:
-		return nil
+	switch response.StatusCode {
+	case http.StatusOK:
+		break
 	case http.StatusBadRequest:
-		return fmt.Errorf("%w: status %d returned", app.ErrBadRequest, res.StatusCode)
+		return "", fmt.Errorf("%w: status %d returned", app.ErrBadRequest, response.StatusCode)
 	default:
-		return fmt.Errorf("unexpected status code: %d", res.StatusCode)
+		return "", fmt.Errorf("unexpected status code: %d", response.StatusCode)
 	}
+
+	var r res.SavePURLResponse
+	if err := json.NewDecoder(response.Body).Decode(&r); err != nil {
+		return "", fmt.Errorf("decoding response body failed: %w", err)
+	}
+
+	return r.Path, nil
 }
 
 func (driver *HTTPDriver) CreateDomain(name string) error {

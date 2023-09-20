@@ -7,7 +7,9 @@ type AdminAPI interface {
 	CreateDomain(name string) error
 
 	// SavePURL creates a new or updates an existing purl.
-	SavePURL(purl *PURL) error
+	//
+	// If no error occurred the returned string is the path (without host) of the created PURL.
+	SavePURL(purl *PURL) (string, error)
 }
 
 // ResolveAPI defines features for PURL resolution.
