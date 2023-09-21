@@ -15,7 +15,9 @@ import (
 )
 
 func TestLoadWithHTTPDriver(t *testing.T) {
-	if !config.TestLoad() {
+	conf := config.Get()
+
+	if !conf.TestLoad {
 		t.Skip("load tests are skipped because they are not enabled via config")
 	}
 

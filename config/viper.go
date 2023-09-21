@@ -8,11 +8,21 @@ import (
 
 var vip *viper.Viper
 
-func init() {
-	vip = setupViper()
+func initViper() error {
+	vip = newViper()
+
+	// trigger config parsing - optional
+	if err := vip.ReadInConfig(); err != nil {
+		var configFileNotFoundError viper.ConfigFileNotFoundError
+		if !errors.As(err, &configFileNotFoundError) {
+			return err
+		}
+	}
+
+	return nil
 }
 
-func setupViper() *viper.Viper {
+func newViper() *viper.Viper {
 	v := viper.New()
 
 	// loading
@@ -31,14 +41,6 @@ func setupViper() *viper.Viper {
 
 	// env binding
 	check(setupEnv(v))
-
-	// trigger config parsing - optional
-	if err := v.ReadInConfig(); err != nil {
-		var configFileNotFoundError viper.ConfigFileNotFoundError
-		if !errors.As(err, &configFileNotFoundError) {
-			check(err)
-		}
-	}
 
 	return v
 }
