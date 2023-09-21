@@ -16,4 +16,15 @@ type ServiceInterface interface {
 	//
 	// ErrBadRequest is returned if the domain already exists.
 	CreateDomain(domain string) error
+
+	// DetermineServiceStats calculates statistics about the service.
+	//
+	// This is potentially an expensive operation and should not be called
+	// frequently.
+	DetermineServiceStats() (*Stats, error)
+}
+
+type Stats struct {
+	DomainsTotal int `json:"domains_total"`
+	PurlsTotal   int `json:"purls_total"`
 }
