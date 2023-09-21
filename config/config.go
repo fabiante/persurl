@@ -17,6 +17,9 @@ func init() {
 // Config is the top level aggregator for all configurations.
 type Config struct {
 	DB *DB
+
+	// TestLoad is used during development to enable load testing.
+	TestLoad bool `mapstructure:"test_load"`
 }
 
 var config *Config
