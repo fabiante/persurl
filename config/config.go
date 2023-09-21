@@ -27,7 +27,7 @@ func initConfig() error {
 	}
 
 	errs := []error{
-		vip.UnmarshalKey("db", config.DB),
+		vip.Unmarshal(config),
 	}
 
 	return errors.Join(errs...)
