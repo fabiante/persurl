@@ -91,20 +91,20 @@ const (
 )
 
 func mapDBError(err error) error {
-	var serr *pq.Error
-	if !errors.As(err, &serr) {
-		return err
-	}
+	var pgERr *pq.Error
 
-	// Error codes
-	// SQLite: https://www.sqlite.org/rescode.html
-	// Postgres: http://www.postgresql.org/docs/9.3/static/errcodes-appendix.html
+	switch {
+	case errors.As(err, &pgERr):
+		// Postgres: http://www.postgresql.org/docs/9.3/static/errcodes-appendix.html
 
-	code := serr.Code
-	switch code {
-	case pgErrUniqueKeyViolation:
-		return fmt.Errorf("%w: %s", ErrBadRequest, err)
+		code := pgERr.Code
+		switch code {
+		case pgErrUniqueKeyViolation:
+			return fmt.Errorf("%w: %s", ErrBadRequest, err)
+		default:
+			return fmt.Errorf("unexpected error: %w", err)
+		}
 	default:
-		return fmt.Errorf("unexpected error: %w", err)
+		return err
 	}
 }
