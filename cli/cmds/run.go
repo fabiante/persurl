@@ -33,8 +33,8 @@ func init() {
 		}
 
 		engine := gin.Default()
-		service := db.NewDatabase(database)
-		server := api.NewServer(service, app.NewAdminService(gormDB))
+		service := app.NewAdminService(gormDB)
+		server := api.NewServer(service, service)
 		api.SetupRouting(engine, server)
 		if err := engine.Run(":8060"); err != nil {
 			log.Fatalf("running api failed: %s", err)
