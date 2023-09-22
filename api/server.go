@@ -9,19 +9,19 @@ import (
 )
 
 type Server struct {
-	service      app.ServiceInterface
-	adminService *app.AdminService
+	resolver app.ResolveServiceInterface
+	admin    app.AdminServiceInterface
 }
 
-func NewServer(service app.ServiceInterface, adminService *app.AdminService) *Server {
-	return &Server{service: service, adminService: adminService}
+func NewServer(resolver app.ResolveServiceInterface, admin app.AdminServiceInterface) *Server {
+	return &Server{resolver: resolver, admin: admin}
 }
 
 func (s *Server) Resolve(ctx *gin.Context) {
 	domain := ctx.Param("domain")
 	name := ctx.Param("name")
 
-	target, err := s.service.Resolve(domain, name)
+	target, err := s.resolver.Resolve(domain, name)
 	switch true {
 	case err == nil:
 		ctx.Redirect(http.StatusFound, target)
