@@ -45,7 +45,9 @@ func SetupPostgresDB(dsn string, maxConnections int) (Handles, error) {
 
 	gormDB, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: database,
-	}))
+	}), &gorm.Config{
+		TranslateError: true, // enables gorm to translate postgres errors to gorm errors
+	})
 	if err != nil {
 		return Handles{}, fmt.Errorf("setting up gorm database failed: %w", err)
 	}
