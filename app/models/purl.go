@@ -18,3 +18,7 @@ type PURL struct {
 	Name   string
 	Target string
 }
+
+func (P PURL) TableName() string {
+	return "purls"
+}
