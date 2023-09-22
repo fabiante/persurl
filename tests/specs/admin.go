@@ -78,9 +78,13 @@ func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
 		dsl.GivenExistingDomain(t, admin, domain)
 		dsl.GivenExistingPURL(t, admin, purl)
 
+		// modify purl's name - updating the target would be the usual case but that is harder to assert.
+		purl.Name = "my-new-name-updated"
+
 		path, err := admin.SavePURL(purl)
 		require.NoError(t, err, "updating existing purl failed")
 		require.NotEmpty(t, path)
+		require.Contains(t, path, "my-new-name-updated")
 	})
 }
 
