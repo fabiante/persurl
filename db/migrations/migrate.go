@@ -39,7 +39,7 @@ func newMigration(name string, query string) *migrator.MigrationNoTx {
 }
 
 var migrationsPostgres = []any{
-	newMigration("2023-09-18-00000001-CreateTableDomains", `create table domains
+	newMigration("2023-09-18-00000010-CreateTableDomains", `create table domains
 (
     id   serial
         constraint domains_pk2
@@ -53,7 +53,7 @@ var migrationsPostgres = []any{
 	
 )`,
 	),
-	newMigration("2023-09-18-00000002-CreateTablePurls", `create table purls
+	newMigration("2023-09-18-00000020-CreateTablePurls", `create table purls
 (
     id        serial
         constraint purls_pk
