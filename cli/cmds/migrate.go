@@ -16,12 +16,12 @@ func init() {
 	}
 
 	cmd.Run = func(cmd *cobra.Command, args []string) {
-		database, _, err := db.SetupPostgresDB(config.DbDSN(), config.DbMaxConnections())
+		database, err := db.SetupPostgresDB(config.DbDSN(), config.DbMaxConnections())
 		if err != nil {
 			log.Fatalf("setting up database failed: %s", err)
 		}
 
-		err = migrations.RunPostgres(database)
+		err = migrations.RunPostgres(database.Std)
 		if err != nil {
 			log.Fatalf("migrating database failed: %s", err)
 		}

@@ -13,8 +13,6 @@ import (
 	"github.com/fabiante/persurl/tests/specs"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 func TestLoadWithHTTPDriver(t *testing.T) {
@@ -27,18 +25,13 @@ func TestLoadWithHTTPDriver(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	handler := gin.Default()
 
-	_, database, err := db.SetupAndMigratePostgresDB(config.DbDSN(), config.DbMaxConnections())
+	database, err := db.SetupAndMigratePostgresDB(config.DbDSN(), config.DbMaxConnections())
 	require.NoError(t, err, "setting up db failed")
 
-	gormDB, err := gorm.Open(postgres.New(postgres.Config{
-		Conn: database,
-	}))
-	require.NoError(t, err, "setting up gorm db failed")
-
-	err = db.EmptyTables(database, "purls", "domains")
+	err = db.EmptyTables(database.Goqu, "purls", "domains")
 	require.NoError(t, err, "truncating tables failed")
 
-	service := app.NewService(gormDB)
+	service := app.NewService(database.Gorm)
 	server := api.NewServer(service, service)
 	api.SetupRouting(handler, server)
 
