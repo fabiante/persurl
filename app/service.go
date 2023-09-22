@@ -34,4 +34,5 @@ type AdminServiceInterface interface {
 
 type UserServiceInterface interface {
 	CreateUser(email string) error
+	GetUser(email string) (*models.User, error)
 }

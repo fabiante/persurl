@@ -26,3 +26,15 @@ func (s *UserService) CreateUser(email string) error {
 		return nil
 	}
 }
+
+func (s *UserService) GetUser(email string) (*models.User, error) {
+	user := &models.User{}
+
+	err := s.db.Take(user, "email = ?", email).Error
+	switch {
+	case err != nil:
+		return nil, mapDBError(err)
+	default:
+		return user, nil
+	}
+}
