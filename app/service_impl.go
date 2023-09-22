@@ -5,10 +5,13 @@ import (
 	"fmt"
 
 	"github.com/fabiante/persurl/app/models"
-	"github.com/lib/pq"
 	"gorm.io/gorm"
 )
 
+// service implements ServiceInterface based on a SQL database, acessed via gorm.DB
+//
+// The given gorm.DB instance is expected to have enabled error translation. This is required for properly
+// mapping errors onto application specific errors.
 type service struct {
 	db *gorm.DB
 }
@@ -86,25 +89,11 @@ func (s *service) SavePURL(domainName, name, target string) error {
 	return nil
 }
 
-const (
-	pgErrUniqueKeyViolation = "23505"
-)
-
 func mapDBError(err error) error {
-	var serr *pq.Error
-	if !errors.As(err, &serr) {
-		return err
-	}
-
-	// Error codes
-	// SQLite: https://www.sqlite.org/rescode.html
-	// Postgres: http://www.postgresql.org/docs/9.3/static/errcodes-appendix.html
-
-	code := serr.Code
-	switch code {
-	case pgErrUniqueKeyViolation:
+	switch {
+	case errors.Is(err, gorm.ErrDuplicatedKey):
 		return fmt.Errorf("%w: %s", ErrBadRequest, err)
 	default:
-		return fmt.Errorf("unexpected error: %w", err)
+		return err
 	}
 }
