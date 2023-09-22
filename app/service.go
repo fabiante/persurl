@@ -31,3 +31,7 @@ type AdminServiceInterface interface {
 	// ErrNotFound is returned if the domain does not exist.
 	GetDomain(name string) (*models.Domain, error)
 }
+
+type UserServiceInterface interface {
+	CreateUser(email string) error
+}
