@@ -20,7 +20,7 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 		return
 	}
 
-	err := s.service.SavePURL(domain, name, req.Target)
+	err := s.adminService.SavePURL(domain, name, req.Target)
 	switch true {
 	case err == nil:
 		break
@@ -36,7 +36,7 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 func (s *Server) CreateDomain(ctx *gin.Context) {
 	domain := ctx.Param("domain")
 
-	err := s.service.CreateDomain(domain)
+	err := s.adminService.CreateDomain(domain)
 	switch true {
 	case err == nil:
 		ctx.Status(http.StatusNoContent)

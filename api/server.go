@@ -9,11 +9,12 @@ import (
 )
 
 type Server struct {
-	service app.ServiceInterface
+	service      app.ServiceInterface
+	adminService *app.AdminService
 }
 
-func NewServer(service app.ServiceInterface) *Server {
-	return &Server{service: service}
+func NewServer(service app.ServiceInterface, adminService *app.AdminService) *Server {
+	return &Server{service: service, adminService: adminService}
 }
 
 func (s *Server) Resolve(ctx *gin.Context) {
