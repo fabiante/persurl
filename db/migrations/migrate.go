@@ -44,9 +44,13 @@ var migrationsPostgres = []any{
     id   serial
         constraint domains_pk2
             unique,
+	created_at timestamp    not null,
+	updated_at timestamp,
+	deleted_at timestamp,
     name varchar(128) not null
         constraint domains_pk
             primary key
+	
 )`,
 	),
 	newMigration("2023-09-18-00000002-CreateTablePurls", `create table purls
@@ -54,6 +58,9 @@ var migrationsPostgres = []any{
     id        serial
         constraint purls_pk
             primary key,
+	created_at timestamp    not null,
+	updated_at timestamp,
+	deleted_at timestamp,
     domain_id integer       not null
         constraint purls_domains_id_fk
             references domains (id)
