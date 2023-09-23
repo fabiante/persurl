@@ -22,12 +22,10 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 
 	domain, err := s.admin.GetDomain(domainName)
 	switch {
-	case err == nil:
-		break
 	case errors.Is(err, app.ErrNotFound):
 		respondWithError(ctx, http.StatusBadRequest, err)
 		return
-	default:
+	case err != nil:
 		respondWithError(ctx, http.StatusInternalServerError, err)
 		return
 	}
@@ -36,12 +34,12 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 
 	err = s.admin.SavePURL(domain, name, req.Target)
 	switch {
-	case err == nil:
-		break
 	case errors.Is(err, app.ErrBadRequest):
 		respondWithError(ctx, http.StatusBadRequest, err)
-	default:
+		return
+	case err != nil:
 		respondWithError(ctx, http.StatusInternalServerError, err)
+		return
 	}
 
 	ctx.JSON(http.StatusOK, res.NewSavePURLResponse(fmt.Sprintf("/r/%s/%s", domainName, name)))

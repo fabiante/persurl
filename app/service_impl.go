@@ -59,11 +59,9 @@ func (s *service) GetDomain(name string) (*models.Domain, error) {
 	err := s.db.Where("name", name).Take(domain).Error
 	if err != nil {
 		switch {
-		case err == nil:
-			break
 		case errors.Is(err, gorm.ErrRecordNotFound):
 			return nil, fmt.Errorf("%w: domain does not exist", ErrNotFound)
-		default:
+		case err != nil:
 			return nil, mapDBError(err)
 		}
 	}
@@ -79,13 +77,13 @@ func (s *service) SavePURL(domain *models.Domain, name, target string) error {
 	}).Error
 
 	switch {
-	case err == nil:
-		return nil
 	case errors.Is(err, gorm.ErrRecordNotFound):
 		return fmt.Errorf("%w: domain does not exist", ErrBadRequest)
-	default:
+	case err != nil:
 		return mapDBError(err)
 	}
+
+	return nil
 }
 
 func mapDBError(err error) error {
