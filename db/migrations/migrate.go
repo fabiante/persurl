@@ -71,4 +71,17 @@ var migrationsPostgres = []any{
         unique (domain_id, name)
 )`,
 	),
+	newMigration("2023-09-22-00000030-CreateTableUsers", `create table users
+(
+    id        serial
+        constraint user_pk
+            primary key,
+	created_at timestamp    not null,
+	updated_at timestamp,
+	deleted_at timestamp,
+    email      varchar(256)  not null,
+    constraint purls_email
+        unique (email)
+)`,
+	),
 }
