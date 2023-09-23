@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 
@@ -29,8 +30,22 @@ func NewHTTPDriver(basePath string, transport http.RoundTripper) *HTTPDriver {
 	return &HTTPDriver{BasePath: basePath, Client: client}
 }
 
+func (driver *HTTPDriver) newRequest(method, url string, body io.Reader) (*http.Request, error) {
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (driver *HTTPDriver) ResolvePURL(domain string, name string) (*url.URL, error) {
-	response, err := driver.Client.Get(fmt.Sprintf("%s/r/%s/%s", driver.BasePath, domain, name))
+	req, err := driver.newRequest(http.MethodGet, fmt.Sprintf("%s/r/%s/%s", driver.BasePath, domain, name), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := driver.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +75,7 @@ func (driver *HTTPDriver) SavePURL(purl *dsl.PURL) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s/a/domains/%s/purls/%s", driver.BasePath, purl.Domain, purl.Name), body)
+	req, err := driver.newRequest(http.MethodPut, fmt.Sprintf("%s/a/domains/%s/purls/%s", driver.BasePath, purl.Domain, purl.Name), body)
 	if err != nil {
 		return "", err
 	}
@@ -88,7 +103,7 @@ func (driver *HTTPDriver) SavePURL(purl *dsl.PURL) (string, error) {
 }
 
 func (driver *HTTPDriver) CreateDomain(name string) error {
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/a/domains/%s", driver.BasePath, name), nil)
+	req, err := driver.newRequest(http.MethodPost, fmt.Sprintf("%s/a/domains/%s", driver.BasePath, name), nil)
 	if err != nil {
 		return err
 	}
