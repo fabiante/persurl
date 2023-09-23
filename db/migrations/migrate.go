@@ -49,10 +49,7 @@ var migrationsPostgres = []any{
 	deleted_at timestamp,
     name varchar(128) not null
         constraint domains_pk
-            primary key
-	
-)`,
-	),
+            primary key)`),
 	newMigration("2023-09-18-00000020-CreateTablePurls", `create table purls
 (
     id        serial
@@ -68,9 +65,7 @@ var migrationsPostgres = []any{
     name      varchar(128)  not null,
     target    varchar(4096) not null,
     constraint purls_pk2
-        unique (domain_id, name)
-)`,
-	),
+        unique (domain_id, name))`),
 	newMigration("2023-09-22-00000030-CreateTableUsers", `create table users
 (
     id        serial
@@ -81,7 +76,21 @@ var migrationsPostgres = []any{
 	deleted_at timestamp,
     email      varchar(256)  not null,
     constraint purls_email
-        unique (email)
-)`,
-	),
+        unique (email))`),
+	newMigration("2023-09-24-00000040-AddUserKeys", `create table user_keys
+(
+    id        serial
+        constraint user_keys_pk
+            primary key,
+	created_at timestamp    not null,
+	updated_at timestamp,
+	deleted_at timestamp,
+    owner_id   int not null,
+    value      varchar(64) not null,
+    constraint user_keys_value
+        unique (value))`),
+	newMigration("2023-09-24-00000050-AddUserKeysFK", `alter table user_keys
+    add constraint user_keys_owner_fk
+        foreign key (owner_id) references users
+            on delete restrict`),
 }
