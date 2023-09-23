@@ -32,7 +32,8 @@ func TestLoadWithHTTPDriver(t *testing.T) {
 	require.NoError(t, err, "truncating tables failed")
 
 	service := app.NewService(database.Gorm)
-	server := api.NewServer(service, service)
+	userService := app.NewUserService(database.Gorm)
+	server := api.NewServer(service, service, userService)
 	api.SetupRouting(handler, server)
 
 	testServer := httptest.NewServer(handler)

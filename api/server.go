@@ -11,10 +11,11 @@ import (
 type Server struct {
 	resolver app.ResolveServiceInterface
 	admin    app.AdminServiceInterface
+	user     app.UserServiceInterface
 }
 
-func NewServer(resolver app.ResolveServiceInterface, admin app.AdminServiceInterface) *Server {
-	return &Server{resolver: resolver, admin: admin}
+func NewServer(resolver app.ResolveServiceInterface, admin app.AdminServiceInterface, user app.UserServiceInterface) *Server {
+	return &Server{resolver: resolver, admin: admin, user: user}
 }
 
 func (s *Server) Resolve(ctx *gin.Context) {
