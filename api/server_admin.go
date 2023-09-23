@@ -48,7 +48,7 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 func (s *Server) CreateDomain(ctx *gin.Context) {
 	domain := ctx.Param("domain")
 
-	err := s.admin.CreateDomain(domain)
+	_, err := s.admin.CreateDomain(domain)
 	switch true {
 	case err == nil:
 		ctx.Status(http.StatusNoContent)

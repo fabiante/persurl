@@ -24,7 +24,7 @@ type AdminServiceInterface interface {
 	// CreateDomain creates a new domain.
 	//
 	// ErrBadRequest is returned if the domain already exists.
-	CreateDomain(domain string) error
+	CreateDomain(domain string) (*models.Domain, error)
 
 	// GetDomain returns the domain with the given name.
 	//
