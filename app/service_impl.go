@@ -39,18 +39,19 @@ func (s *service) Resolve(domain, name string) (string, error) {
 	}
 }
 
-func (s *service) CreateDomain(name string) error {
+func (s *service) CreateDomain(name string) (*models.Domain, error) {
 	domain := &models.Domain{
 		Name: name,
 	}
 
 	err := s.db.Create(domain).Error
 
-	if err != nil {
-		return mapDBError(err)
+	switch {
+	case err != nil:
+		return nil, mapDBError(err)
+	default:
+		return domain, nil
 	}
-
-	return nil
 }
 
 func (s *service) GetDomain(name string) (*models.Domain, error) {
