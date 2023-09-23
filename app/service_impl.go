@@ -53,37 +53,34 @@ func (s *service) CreateDomain(name string) error {
 	return nil
 }
 
-func (s *service) SavePURL(domainName, name, target string) error {
+func (s *service) GetDomain(name string) (*models.Domain, error) {
 	domain := &models.Domain{}
 
-	// get domain
-	{
-		err := s.db.Where(&models.Domain{Name: domainName}).Take(domain).Error
-		if err != nil {
-			switch {
-			case err == nil:
-				break
-			case errors.Is(err, gorm.ErrRecordNotFound):
-				return fmt.Errorf("%w: domain does not exist", ErrBadRequest)
-			default:
-				return mapDBError(err)
-			}
+	err := s.db.Where("name", name).Take(domain).Error
+	if err != nil {
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			return nil, fmt.Errorf("%w: domain does not exist", ErrNotFound)
+		case err != nil:
+			return nil, mapDBError(err)
 		}
 	}
 
-	// save purl
-	{
-		purl := &models.PURL{
-			DomainID: domain.ID,
-			Name:     name,
-			Target:   target,
-		}
+	return domain, nil
+}
 
-		err := s.db.FirstOrCreate(purl).Error
+func (s *service) SavePURL(domain *models.Domain, name, target string) error {
+	err := s.db.FirstOrCreate(&models.PURL{
+		DomainID: domain.ID,
+		Name:     name,
+		Target:   target,
+	}).Error
 
-		if err != nil {
-			return mapDBError(err)
-		}
+	switch {
+	case errors.Is(err, gorm.ErrRecordNotFound):
+		return fmt.Errorf("%w: domain does not exist", ErrBadRequest)
+	case err != nil:
+		return mapDBError(err)
 	}
 
 	return nil

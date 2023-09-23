@@ -11,7 +11,7 @@ import (
 )
 
 func (s *Server) SavePURL(ctx *gin.Context) {
-	domain := ctx.Param("domain")
+	domainName := ctx.Param("domain")
 	name := ctx.Param("name")
 
 	var req res.SavePURL
@@ -20,17 +20,29 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 		return
 	}
 
-	err := s.admin.SavePURL(domain, name, req.Target)
-	switch true {
-	case err == nil:
-		break
-	case errors.Is(err, app.ErrBadRequest):
+	domain, err := s.admin.GetDomain(domainName)
+	switch {
+	case errors.Is(err, app.ErrNotFound):
 		respondWithError(ctx, http.StatusBadRequest, err)
-	default:
+		return
+	case err != nil:
 		respondWithError(ctx, http.StatusInternalServerError, err)
+		return
 	}
 
-	ctx.JSON(http.StatusOK, res.NewSavePURLResponse(fmt.Sprintf("/r/%s/%s", domain, name)))
+	// todo: check user authorization on this url
+
+	err = s.admin.SavePURL(domain, name, req.Target)
+	switch {
+	case errors.Is(err, app.ErrBadRequest):
+		respondWithError(ctx, http.StatusBadRequest, err)
+		return
+	case err != nil:
+		respondWithError(ctx, http.StatusInternalServerError, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, res.NewSavePURLResponse(fmt.Sprintf("/r/%s/%s", domainName, name)))
 }
 
 func (s *Server) CreateDomain(ctx *gin.Context) {
