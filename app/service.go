@@ -19,7 +19,7 @@ type AdminServiceInterface interface {
 	//
 	// ErrBadRequest is returned if any parameter is invalid or the domain
 	// does not exist.
-	SavePURL(domain, name, target string) error
+	SavePURL(domain *models.Domain, name, target string) error
 
 	// CreateDomain creates a new domain.
 	//

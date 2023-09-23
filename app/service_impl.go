@@ -62,7 +62,7 @@ func (s *service) GetDomain(name string) (*models.Domain, error) {
 		case err == nil:
 			break
 		case errors.Is(err, gorm.ErrRecordNotFound):
-			return nil, fmt.Errorf("%w: domain does not exist", ErrBadRequest)
+			return nil, fmt.Errorf("%w: domain does not exist", ErrNotFound)
 		default:
 			return nil, mapDBError(err)
 		}
@@ -71,23 +71,21 @@ func (s *service) GetDomain(name string) (*models.Domain, error) {
 	return domain, nil
 }
 
-func (s *service) SavePURL(domainName, name, target string) error {
-	domain, err := s.GetDomain(domainName)
-	if err != nil {
-		return err
-	}
-
-	// save purl
-	err = s.db.FirstOrCreate(&models.PURL{
+func (s *service) SavePURL(domain *models.Domain, name, target string) error {
+	err := s.db.FirstOrCreate(&models.PURL{
 		DomainID: domain.ID,
 		Name:     name,
 		Target:   target,
 	}).Error
-	if err != nil {
+
+	switch {
+	case err == nil:
+		return nil
+	case errors.Is(err, gorm.ErrRecordNotFound):
+		return fmt.Errorf("%w: domain does not exist", ErrBadRequest)
+	default:
 		return mapDBError(err)
 	}
-
-	return nil
 }
 
 func mapDBError(err error) error {
