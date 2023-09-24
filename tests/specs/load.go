@@ -64,13 +64,12 @@ func TestLoad(t *testing.T, api dsl.API) {
 		for i, test := range tests {
 			t.Run(fmt.Sprintf("tests[%d] create:%d", i, test.CreateAgents), func(t *testing.T) {
 				ctx, cancel := context.WithCancel(context.Background())
-				done := ctx.Done()
 				wg := &sync.WaitGroup{}
 
 				for j := 0; j < test.CreateAgents; j++ {
 					agent := load.NewCreateAgent(j, fmt.Sprintf("agent-%d-%d", i, j), test.CreateInterval, api)
 					wg.Add(1)
-					go agent.Run(t, done, wg)
+					go agent.Run(t, ctx, wg)
 				}
 
 				time.Sleep(test.Duration)

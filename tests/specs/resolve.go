@@ -1,6 +1,7 @@
 package specs
 
 import (
+	"context"
 	"testing"
 
 	"github.com/fabiante/persurl/app"
@@ -9,12 +10,14 @@ import (
 )
 
 func TestResolver(t *testing.T, resolver dsl.API) {
+	ctx := context.TODO()
+
 	t.Run("resolver", func(t *testing.T) {
 		t.Run("does not resolve non-existent domain", func(t *testing.T) {
 			domain := "something-very-stupid-9873214356"
 			name := "should-not-exist"
 
-			purl, err := resolver.ResolvePURL(domain, name)
+			purl, err := resolver.ResolvePURL(ctx, domain, name)
 			require.Error(t, err)
 			require.ErrorIs(t, err, app.ErrNotFound)
 			require.Nil(t, purl)
@@ -24,9 +27,9 @@ func TestResolver(t *testing.T, resolver dsl.API) {
 			domain := "something-very-stupid-34563456"
 			name := "should-not-exist"
 
-			dsl.GivenExistingDomain(t, resolver, domain)
+			dsl.GivenExistingDomain(ctx, t, resolver, domain)
 
-			purl, err := resolver.ResolvePURL(domain, name)
+			purl, err := resolver.ResolvePURL(ctx, domain, name)
 			require.Error(t, err)
 			require.ErrorIs(t, err, app.ErrNotFound)
 			require.Nil(t, purl)
@@ -36,10 +39,10 @@ func TestResolver(t *testing.T, resolver dsl.API) {
 			domain := "my-domain"
 			name := "my-name"
 
-			dsl.GivenExistingDomain(t, resolver, domain)
-			dsl.GivenExistingPURL(t, resolver, dsl.NewPURL(domain, name, mustParseURL("https://google.com")))
+			dsl.GivenExistingDomain(ctx, t, resolver, domain)
+			dsl.GivenExistingPURL(ctx, t, resolver, dsl.NewPURL(domain, name, mustParseURL("https://google.com")))
 
-			purl, err := resolver.ResolvePURL(domain, name)
+			purl, err := resolver.ResolvePURL(ctx, domain, name)
 			require.NoError(t, err)
 			require.NotNil(t, purl)
 		})
