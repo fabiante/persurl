@@ -30,7 +30,12 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 		return
 	}
 
-	// todo: check user authorization on this url
+	// check authorization
+	user := getAuthenticatedUser(ctx)
+	if domain.OwnerID != user.ID {
+		respondWithError(ctx, http.StatusForbidden, ErrForbidden)
+		return
+	}
 
 	err = s.admin.SavePURL(domain, name, req.Target)
 	switch {
