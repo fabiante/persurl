@@ -16,7 +16,7 @@ func NewUserService(db *gorm.DB) *UserService {
 	return &UserService{db: db}
 }
 
-func (s *UserService) CreateUser(email string) error {
+func (s *UserService) CreateUser(email string) (*models.User, error) {
 	user := &models.User{
 		Email: email,
 	}
@@ -24,9 +24,9 @@ func (s *UserService) CreateUser(email string) error {
 	err := s.db.Create(user).Error
 	switch {
 	case err != nil:
-		return mapDBError(err)
+		return nil, mapDBError(err)
 	default:
-		return nil
+		return user, nil
 	}
 }
 
