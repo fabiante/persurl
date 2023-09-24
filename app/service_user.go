@@ -35,6 +35,8 @@ func (s *UserService) GetUser(email string) (*models.User, error) {
 
 	err := s.db.Take(user, "email = ?", email).Error
 	switch {
+	case errors.Is(err, gorm.ErrRecordNotFound):
+		return nil, ErrNotFound
 	case err != nil:
 		return nil, mapDBError(err)
 	default:
@@ -79,6 +81,8 @@ func (s *UserService) GetUserKey(value string) (*models.UserKey, error) {
 
 	err := s.db.Take(key, "value = ?", value).Error
 	switch {
+	case errors.Is(err, gorm.ErrRecordNotFound):
+		return nil, ErrNotFound
 	case err != nil:
 		return nil, mapDBError(err)
 	default:
