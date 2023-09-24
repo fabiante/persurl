@@ -3,6 +3,8 @@ package dsl
 import (
 	"testing"
 
+	"github.com/fabiante/persurl/app"
+	"github.com/fabiante/persurl/app/models"
 	"github.com/stretchr/testify/require"
 )
 
@@ -21,4 +23,13 @@ func GivenExistingPURL(t *testing.T, service AdminAPI, purl *PURL) {
 func GivenExistingDomain(t *testing.T, service AdminAPI, domain string) {
 	err := service.CreateDomain(domain)
 	require.NoError(t, err, "creating domain failed")
+}
+
+// GivenSomeUser creates a user and returns the key for it.
+func GivenSomeUser(t *testing.T, userService *app.UserService) *models.UserKey {
+	user, err := userService.CreateUser("test@local.com")
+	require.NoError(t, err)
+
+	key, err := userService.CreateUserKey(user)
+	return key
 }
