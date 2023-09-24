@@ -33,6 +33,10 @@ type AdminServiceInterface interface {
 }
 
 type UserServiceInterface interface {
-	CreateUser(email string) error
+	CreateUser(email string) (*models.User, error)
 	GetUser(email string) (*models.User, error)
+	GetUserByKey(key string) (*models.User, error)
+
+	CreateUserKey(user *models.User) (*models.UserKey, error)
+	GetUserKey(value string) (*models.UserKey, error)
 }

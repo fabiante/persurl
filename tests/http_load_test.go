@@ -10,6 +10,7 @@ import (
 	"github.com/fabiante/persurl/config"
 	"github.com/fabiante/persurl/db"
 	"github.com/fabiante/persurl/tests/driver"
+	"github.com/fabiante/persurl/tests/dsl"
 	"github.com/fabiante/persurl/tests/specs"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
@@ -28,17 +29,21 @@ func TestLoadWithHTTPDriver(t *testing.T) {
 	database, err := db.SetupAndMigratePostgresDB(config.DbDSN(), config.DbMaxConnections())
 	require.NoError(t, err, "setting up db failed")
 
-	err = db.EmptyTables(database.Goqu, "purls", "domains")
+	err = db.EmptyTables(database.Goqu, "purls", "domains", "user_keys", "users")
 	require.NoError(t, err, "truncating tables failed")
 
 	service := app.NewService(database.Gorm)
 	userService := app.NewUserService(database.Gorm)
+
+	key := dsl.GivenSomeUser(t, userService)
+
 	server := api.NewServer(service, service, userService)
 	api.SetupRouting(handler, server)
 
 	testServer := httptest.NewServer(handler)
 
 	dr := driver.NewHTTPDriver(testServer.URL, http.DefaultTransport)
+	dr.UserToken = key.Value
 
 	specs.TestLoad(t, dr)
 }
