@@ -2,6 +2,7 @@ package driver
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -44,7 +45,7 @@ func (driver *HTTPDriver) newRequest(method, url string, body io.Reader) (*http.
 	return req, nil
 }
 
-func (driver *HTTPDriver) ResolvePURL(domain string, name string) (*url.URL, error) {
+func (driver *HTTPDriver) ResolvePURL(_ context.Context, domain string, name string) (*url.URL, error) {
 	req, err := driver.newRequest(http.MethodGet, fmt.Sprintf("%s/r/%s/%s", driver.BasePath, domain, name), nil)
 	if err != nil {
 		return nil, err
@@ -72,7 +73,7 @@ func (driver *HTTPDriver) ResolvePURL(domain string, name string) (*url.URL, err
 	return loc, nil
 }
 
-func (driver *HTTPDriver) SavePURL(purl *dsl.PURL) (string, error) {
+func (driver *HTTPDriver) SavePURL(_ context.Context, purl *dsl.PURL) (string, error) {
 	body := bytes.NewBuffer([]byte{})
 	err := json.NewEncoder(body).Encode(map[string]string{
 		"target": purl.Target.String(),
@@ -107,7 +108,7 @@ func (driver *HTTPDriver) SavePURL(purl *dsl.PURL) (string, error) {
 	return r.Path, nil
 }
 
-func (driver *HTTPDriver) CreateDomain(name string) error {
+func (driver *HTTPDriver) CreateDomain(_ context.Context, name string) error {
 	req, err := driver.newRequest(http.MethodPost, fmt.Sprintf("%s/a/domains/%s", driver.BasePath, name), nil)
 	if err != nil {
 		return err

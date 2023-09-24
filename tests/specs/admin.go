@@ -1,6 +1,7 @@
 package specs
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -17,6 +18,8 @@ func TestAdministration(t *testing.T, admin dsl.AdminAPI) {
 }
 
 func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
+	ctx := context.TODO()
+
 	t.Run("can't create invalid PURL", func(t *testing.T) {
 		invalid := []*dsl.PURL{
 			// empty
@@ -33,11 +36,11 @@ func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
 			dsl.NewPURL("valid", "`", mustParseURL("example.com")),
 		}
 
-		dsl.GivenExistingDomain(t, admin, "valid")
+		dsl.GivenExistingDomain(ctx, t, admin, "valid")
 
 		for i, purl := range invalid {
 			t.Run(fmt.Sprintf("invalid[%d]", i), func(t *testing.T) {
-				_, err := admin.SavePURL(purl)
+				_, err := admin.SavePURL(ctx, purl)
 				require.Error(t, err)
 				//require.ErrorIs(t, err, app.ErrBadRequest) // TODO: Some tests cause a 404 with the http driver.
 			})
@@ -48,13 +51,13 @@ func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
 		domain := "this-domain-does-not-exist-it-should-not"
 		purl := dsl.NewPURL(domain, "my-name3456334654645663456", mustParseURL("https://google.com"))
 
-		_, err := admin.SavePURL(purl)
+		_, err := admin.SavePURL(ctx, purl)
 		require.ErrorIs(t, err, app.ErrBadRequest)
 	})
 
 	t.Run("can create new PURL", func(t *testing.T) {
 		domain := "my-domain-123456"
-		dsl.GivenExistingDomain(t, admin, domain)
+		dsl.GivenExistingDomain(ctx, t, admin, domain)
 
 		validPurls := []*dsl.PURL{
 			dsl.NewPURL(domain, "my-name3456345663456", mustParseURL("https://google.com")),
@@ -64,7 +67,7 @@ func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
 		for i, purl := range validPurls {
 			t.Run(fmt.Sprintf("valid[%d]", i), func(t *testing.T) {
 				// TODO: Assert non-existence of purl to be created
-				path, err := admin.SavePURL(purl)
+				path, err := admin.SavePURL(ctx, purl)
 				require.NoError(t, err, "creating purl failed")
 				require.NotEmpty(t, path)
 			})
@@ -75,13 +78,13 @@ func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
 		domain := "my-domain-123456789"
 		purl := dsl.NewPURL(domain, "my-name3458904562454564565467", mustParseURL("https://google.com"))
 
-		dsl.GivenExistingDomain(t, admin, domain)
-		dsl.GivenExistingPURL(t, admin, purl)
+		dsl.GivenExistingDomain(ctx, t, admin, domain)
+		dsl.GivenExistingPURL(ctx, t, admin, purl)
 
 		// modify purl's name - updating the target would be the usual case but that is harder to assert.
 		purl.Name = "my-new-name-updated"
 
-		path, err := admin.SavePURL(purl)
+		path, err := admin.SavePURL(ctx, purl)
 		require.NoError(t, err, "updating existing purl failed")
 		require.NotEmpty(t, path)
 		require.Contains(t, path, "my-new-name-updated")
@@ -89,6 +92,8 @@ func testPurlAdmin(t *testing.T, admin dsl.AdminAPI) {
 }
 
 func testDomainAdmin(t *testing.T, admin dsl.AdminAPI) {
+	ctx := context.TODO()
+
 	t.Run("can't create invalid domain", func(t *testing.T) {
 		invalid := []string{
 			// empty
@@ -107,7 +112,7 @@ func testDomainAdmin(t *testing.T, admin dsl.AdminAPI) {
 
 		for i, domain := range invalid {
 			t.Run(fmt.Sprintf("invalid[%d]", i), func(t *testing.T) {
-				err := admin.CreateDomain(domain)
+				err := admin.CreateDomain(ctx, domain)
 				require.Error(t, err)
 				//require.ErrorIs(t, err, app.ErrBadRequest) // TODO: Some tests cause a 404 with the http driver.
 			})
@@ -122,7 +127,7 @@ func testDomainAdmin(t *testing.T, admin dsl.AdminAPI) {
 
 		for i, v := range valid {
 			t.Run(fmt.Sprintf("valid[%d]", i), func(*testing.T) {
-				err := admin.CreateDomain(v)
+				err := admin.CreateDomain(ctx, v)
 				require.NoError(t, err)
 			})
 		}
@@ -130,8 +135,8 @@ func testDomainAdmin(t *testing.T, admin dsl.AdminAPI) {
 
 	t.Run("can't create duplicate domain", func(t *testing.T) {
 		domain := "should-exist-once-4357824758wr47895645"
-		dsl.GivenExistingDomain(t, admin, domain)
-		err := admin.CreateDomain("should-exist-once-4357824758wr47895645")
+		dsl.GivenExistingDomain(ctx, t, admin, domain)
+		err := admin.CreateDomain(ctx, "should-exist-once-4357824758wr47895645")
 		require.Error(t, err)
 		require.ErrorIs(t, err, app.ErrBadRequest)
 	})

@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,6 +18,8 @@ import (
 )
 
 func TestLoadWithHTTPDriver(t *testing.T) {
+	ctx := context.TODO()
+
 	conf := config.Get()
 
 	if !conf.TestLoad {
@@ -35,7 +38,7 @@ func TestLoadWithHTTPDriver(t *testing.T) {
 	service := app.NewService(database.Gorm)
 	userService := app.NewUserService(database.Gorm)
 
-	key := dsl.GivenSomeUser(t, userService)
+	key := dsl.GivenSomeUser(ctx, t, userService)
 
 	server := api.NewServer(service, service, userService)
 	api.SetupRouting(handler, server)

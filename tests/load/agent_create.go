@@ -1,6 +1,7 @@
 package load
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"sync"
@@ -31,13 +32,15 @@ func NewCreateAgent(id int, domain string, createInterval time.Duration, API dsl
 //
 // Run ensures that the agent's Domain exists before starting to create PURLs.
 //
-// The agent runs until a message is sent to the done channel. It will then decrement the given wait group.
+// The agent runs until the given context is cancelled. It will then decrement the given wait group.
 //
 // You should use this method in a dedicated goroutine as this is a blocking function.
-func (a *CreateAgent) Run(t *testing.T, done <-chan struct{}, wg *sync.WaitGroup) {
+func (a *CreateAgent) Run(t *testing.T, ctx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	dsl.GivenExistingDomain(t, a.API, a.Domain)
+	done := ctx.Done()
+
+	dsl.GivenExistingDomain(ctx, t, a.API, a.Domain)
 
 	target, _ := url.Parse("https://google.com")
 	i := 0
@@ -45,7 +48,7 @@ func (a *CreateAgent) Run(t *testing.T, done <-chan struct{}, wg *sync.WaitGroup
 	for {
 		name := fmt.Sprintf("purl-%d", i)
 
-		path, err := a.API.SavePURL(dsl.NewPURL(a.Domain, name, target))
+		path, err := a.API.SavePURL(ctx, dsl.NewPURL(a.Domain, name, target))
 		require.NoError(t, err)
 		require.NotEmpty(t, path)
 

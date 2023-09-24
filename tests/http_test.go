@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,6 +18,7 @@ import (
 )
 
 func TestWithHTTPDriver(t *testing.T) {
+	ctx := context.TODO()
 	gin.SetMode(gin.TestMode)
 	handler := gin.Default()
 
@@ -29,7 +31,7 @@ func TestWithHTTPDriver(t *testing.T) {
 	service := app.NewService(database.Gorm)
 	userService := app.NewUserService(database.Gorm)
 
-	key := dsl.GivenSomeUser(t, userService)
+	key := dsl.GivenSomeUser(ctx, t, userService)
 
 	server := api.NewServer(service, service, userService)
 	api.SetupRouting(handler, server)
