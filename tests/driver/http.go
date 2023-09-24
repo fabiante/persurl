@@ -14,8 +14,9 @@ import (
 )
 
 type HTTPDriver struct {
-	BasePath string
-	Client   *http.Client
+	BasePath  string
+	Client    *http.Client
+	UserToken string
 }
 
 func NewHTTPDriver(basePath string, transport http.RoundTripper) *HTTPDriver {
@@ -34,6 +35,10 @@ func (driver *HTTPDriver) newRequest(method, url string, body io.Reader) (*http.
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
+	}
+
+	if driver.UserToken != "" {
+		req.Header.Set("Persurl-Key", driver.UserToken)
 	}
 
 	return req, nil
