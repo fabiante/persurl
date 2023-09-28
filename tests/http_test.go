@@ -32,6 +32,7 @@ func TestWithHTTPDriver(t *testing.T) {
 	userService := app.NewUserService(database.Gorm)
 
 	key := dsl.GivenSomeUser(ctx, t, userService)
+	ctx = driver.CtxWithUserKey(ctx, key.Value)
 
 	server := api.NewServer(service, service, userService)
 	api.SetupRouting(handler, server)
@@ -39,7 +40,6 @@ func TestWithHTTPDriver(t *testing.T) {
 	testServer := httptest.NewServer(handler)
 
 	dr := driver.NewHTTPDriver(testServer.URL, http.DefaultTransport)
-	dr.UserToken = key.Value
 
 	specs.TestResolver(t, dr)
 	specs.TestAdministration(t, dr)

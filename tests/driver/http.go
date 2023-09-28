@@ -15,9 +15,8 @@ import (
 )
 
 type HTTPDriver struct {
-	BasePath  string
-	Client    *http.Client
-	UserToken string
+	BasePath string
+	Client   *http.Client
 }
 
 func NewHTTPDriver(basePath string, transport http.RoundTripper) *HTTPDriver {
@@ -32,21 +31,22 @@ func NewHTTPDriver(basePath string, transport http.RoundTripper) *HTTPDriver {
 	return &HTTPDriver{BasePath: basePath, Client: client}
 }
 
-func (driver *HTTPDriver) newRequest(method, url string, body io.Reader) (*http.Request, error) {
+func (driver *HTTPDriver) newRequest(ctx context.Context, method, url string, body io.Reader) (*http.Request, error) {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
 	}
 
-	if driver.UserToken != "" {
-		req.Header.Set("Persurl-Key", driver.UserToken)
+	userKey := getUserKeyFromCtx(ctx)
+	if userKey != "" {
+		req.Header.Set("Persurl-Key", userKey)
 	}
 
 	return req, nil
 }
 
-func (driver *HTTPDriver) ResolvePURL(_ context.Context, domain string, name string) (*url.URL, error) {
-	req, err := driver.newRequest(http.MethodGet, fmt.Sprintf("%s/r/%s/%s", driver.BasePath, domain, name), nil)
+func (driver *HTTPDriver) ResolvePURL(ctx context.Context, domain string, name string) (*url.URL, error) {
+	req, err := driver.newRequest(ctx, http.MethodGet, fmt.Sprintf("%s/r/%s/%s", driver.BasePath, domain, name), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func (driver *HTTPDriver) ResolvePURL(_ context.Context, domain string, name str
 	return loc, nil
 }
 
-func (driver *HTTPDriver) SavePURL(_ context.Context, purl *dsl.PURL) (string, error) {
+func (driver *HTTPDriver) SavePURL(ctx context.Context, purl *dsl.PURL) (string, error) {
 	body := bytes.NewBuffer([]byte{})
 	err := json.NewEncoder(body).Encode(map[string]string{
 		"target": purl.Target.String(),
@@ -81,7 +81,7 @@ func (driver *HTTPDriver) SavePURL(_ context.Context, purl *dsl.PURL) (string, e
 	if err != nil {
 		return "", err
 	}
-	req, err := driver.newRequest(http.MethodPut, fmt.Sprintf("%s/a/domains/%s/purls/%s", driver.BasePath, purl.Domain, purl.Name), body)
+	req, err := driver.newRequest(ctx, http.MethodPut, fmt.Sprintf("%s/a/domains/%s/purls/%s", driver.BasePath, purl.Domain, purl.Name), body)
 	if err != nil {
 		return "", err
 	}
@@ -108,8 +108,8 @@ func (driver *HTTPDriver) SavePURL(_ context.Context, purl *dsl.PURL) (string, e
 	return r.Path, nil
 }
 
-func (driver *HTTPDriver) CreateDomain(_ context.Context, name string) error {
-	req, err := driver.newRequest(http.MethodPost, fmt.Sprintf("%s/a/domains/%s", driver.BasePath, name), nil)
+func (driver *HTTPDriver) CreateDomain(ctx context.Context, name string) error {
+	req, err := driver.newRequest(ctx, http.MethodPost, fmt.Sprintf("%s/a/domains/%s", driver.BasePath, name), nil)
 	if err != nil {
 		return err
 	}
@@ -127,4 +127,18 @@ func (driver *HTTPDriver) CreateDomain(_ context.Context, name string) error {
 	default:
 		return fmt.Errorf("unexpected status code: %d", response.StatusCode)
 	}
+}
+
+const ctxKeyUserKey = "auth-user-key"
+
+func getUserKeyFromCtx(ctx context.Context) string {
+	value := ctx.Value(ctxKeyUserKey)
+	if value == nil {
+		return ""
+	}
+	return value.(string)
+}
+
+func CtxWithUserKey(ctx context.Context, key string) context.Context {
+	return context.WithValue(ctx, ctxKeyUserKey, key)
 }
