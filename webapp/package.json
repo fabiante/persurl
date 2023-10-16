@@ -13,7 +13,7 @@
 		"preact-render-to-string": "^6.2.2"
 	},
 	"devDependencies": {
-		"@preact/preset-vite": "^2.5.0",
+		"@preact/preset-vite": "^2.6.0",
 		"typescript": "^5.2.2",
 		"vite": "^4.4.11"
 	}
