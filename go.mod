@@ -12,7 +12,7 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.17.0
 	github.com/stretchr/testify v1.8.4
-	gorm.io/driver/postgres v1.5.3
+	gorm.io/driver/postgres v1.5.4
 	gorm.io/gorm v1.25.5
 )
 
@@ -56,10 +56,10 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.13.0 // indirect
+	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/net v0.15.0 // indirect
-	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
