@@ -93,4 +93,11 @@ var migrationsPostgres = []any{
     add constraint user_keys_owner_fk
         foreign key (owner_id) references users
             on delete restrict`),
+	newMigration("2023-09-25-00000060-AddOwnerIdToDomains", `alter table domains
+    add owner_id integer not null`,),
+	newMigration("2023-09-25-00000070-AddOwnerIdToDomainsFK", `alter table domains
+    add constraint domains_owner_fk
+        foreign key (owner_id) references users
+            on delete restrict;
+	`),
 }

@@ -19,6 +19,8 @@ func SetupRouting(r gin.IRouter, s *Server) {
 		swaggerUI.Register(r)
 	}
 
+	isAuthenticated := authenticatedMiddleware(s.user)
+
 	webapp.Register(r)
 
 	validDomain := validPathVar("domain", regexNamed)
@@ -40,10 +42,10 @@ func SetupRouting(r gin.IRouter, s *Server) {
 		admin.Use(validDomain)
 
 		// Domain
-		admin.POST("/domains/:domain", s.CreateDomain)
+		admin.POST("/domains/:domain", isAuthenticated, s.CreateDomain)
 
 		// PURL
-		admin.PUT("/domains/:domain/purls/:name", validName, s.SavePURL)
+		admin.PUT("/domains/:domain/purls/:name", isAuthenticated, validName, s.SavePURL)
 	}
 
 	// System endpoints

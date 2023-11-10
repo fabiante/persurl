@@ -5,6 +5,8 @@ import "gorm.io/gorm"
 type Domain struct {
 	gorm.Model
 
+	OwnerID uint
+
 	Name string
 
 	PURLs []*PURL `gorm:"foreignKey:DomainID"`
