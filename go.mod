@@ -6,7 +6,7 @@ require (
 	github.com/DEXPRO-Solutions-GmbH/swaggerui v1.1.1
 	github.com/doug-martin/goqu/v9 v9.18.0
 	github.com/gin-gonic/gin v1.9.1
-	github.com/google/uuid v1.5.0
+	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
 	github.com/lopezator/migrator v0.3.1
 	github.com/spf13/cobra v1.8.0
