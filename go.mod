@@ -11,7 +11,7 @@ require (
 	github.com/lopezator/migrator v0.3.1
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.17.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	gorm.io/driver/postgres v1.5.4
 	gorm.io/gorm v1.25.6
 )
