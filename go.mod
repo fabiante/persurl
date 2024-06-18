@@ -3,7 +3,7 @@ module github.com/fabiante/persurl
 go 1.21
 
 require (
-	github.com/DEXPRO-Solutions-GmbH/swaggerui v1.1.1
+	github.com/DEXPRO-Solutions-GmbH/swaggerui v1.1.2
 	github.com/doug-martin/goqu/v9 v9.18.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
