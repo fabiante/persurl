@@ -39,9 +39,10 @@ func (s *service) Resolve(domain, name string) (string, error) {
 	}
 }
 
-func (s *service) CreateDomain(name string) (*models.Domain, error) {
+func (s *service) CreateDomain(user *models.User, name string) (*models.Domain, error) {
 	domain := &models.Domain{
-		Name: name,
+		Name:    name,
+		OwnerID: user.ID,
 	}
 
 	err := s.db.Create(domain).Error

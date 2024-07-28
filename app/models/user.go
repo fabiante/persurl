@@ -7,6 +7,8 @@ type User struct {
 
 	Email string
 
+	Domains []*Domain `gorm:"foreignKey:OwnerID"`
+
 	Keys []*UserKey `gorm:"foreignKey:OwnerID"`
 }
 

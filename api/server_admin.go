@@ -30,7 +30,12 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 		return
 	}
 
-	// todo: check user authorization on this url
+	// check authorization
+	user := getAuthenticatedUser(ctx)
+	if domain.OwnerID != user.ID {
+		respondWithError(ctx, http.StatusForbidden, ErrForbidden)
+		return
+	}
 
 	err = s.admin.SavePURL(domain, name, req.Target)
 	switch {
@@ -48,7 +53,9 @@ func (s *Server) SavePURL(ctx *gin.Context) {
 func (s *Server) CreateDomain(ctx *gin.Context) {
 	domain := ctx.Param("domain")
 
-	_, err := s.admin.CreateDomain(domain)
+	user := getAuthenticatedUser(ctx)
+
+	_, err := s.admin.CreateDomain(user, domain)
 	switch true {
 	case err == nil:
 		ctx.Status(http.StatusNoContent)
