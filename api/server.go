@@ -18,7 +18,7 @@ func NewServer(resolver app.ResolveServiceInterface, admin app.AdminServiceInter
 	return &Server{resolver: resolver, admin: admin, user: user}
 }
 
-func (s *Server) Resolve(ctx *gin.Context) {
+func (s *Server) Resolve(ctx *gin.Context) error {
 	domain := ctx.Param("domain")
 	name := ctx.Param("name")
 
@@ -26,11 +26,11 @@ func (s *Server) Resolve(ctx *gin.Context) {
 	switch true {
 	case err == nil:
 		ctx.Redirect(http.StatusFound, target)
-		return
+		return nil
 	case errors.Is(err, app.ErrNotFound):
 		respondWithError(ctx, http.StatusNotFound, err)
-		return
+		return nil
 	default:
-		respondWithError(ctx, http.StatusInternalServerError, err)
+		return err
 	}
 }
