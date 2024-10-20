@@ -30,7 +30,7 @@ func SetupRouting(r gin.IRouter, s *Server) {
 
 		resolve.Use(validDomain, validName)
 
-		resolve.GET("/:domain/:name", s.Resolve)
+		resolve.GET("/:domain/:name", AsErrHandler(s.Resolve))
 	}
 
 	// Admin endpoints
